@@ -12,4 +12,4 @@ The second stage of the whole working
 **Pic2.R**: radarplot and Figure S5
 
 ## Create
-**HHC.xlsx**: add subtype information to data.xlsx(from cleandata)
+**HHC.xlsx**: add subtype information to Data.xlsx(from Cleandata)
