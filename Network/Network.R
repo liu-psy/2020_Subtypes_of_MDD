@@ -16,7 +16,7 @@ library(patchwork)
 
 setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/Network")
 # Load Data --------------------------------------------------------------------
-home <- "E:/WorkingSpace/R/Paper/Depression/HHC/Subtypes/HHC.xlsx"
+home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC/HHC.xlsx"
 patient <- read.xlsx2(home, 1, stringsAsFactors = FALSE, check.names = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)))
 
