@@ -639,6 +639,8 @@ rm(p1, p2, p3, pca_level1, pca_level2, pca_levels, subd_level1, subd_level2,
 ################################################################################
 ########################### Network Analysis ###################################
 ################################################################################
+    
+# This part was mainly derived from https://github.com/Melovainio/Network_depression       
 library(qgraph)
 library(igraph)
 library(EstimateGroupNetwork)
