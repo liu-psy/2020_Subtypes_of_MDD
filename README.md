@@ -1,4 +1,5 @@
 # 2020_Subtypes_of_MDD
+**All** folder contains An integrated version of all scripts
 
 ## Analysis
 **Analysis stream**: Cleandata -> HHC -> Network -> ROI
