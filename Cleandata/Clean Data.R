@@ -13,9 +13,9 @@ setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data")
 
 # Loading Data -----------------------------------------------------------------
 # Data of REST-meta-MDD
-home1 <- "E:/WorkingSpace/R/Paper/Depression/Clean Data/Depression.xlsx"
+home1 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data/Depression.xlsx"
 # Data of SWU
-home2 <- "E:/WorkingSpace/R/Paper/Depression/Clean Data/SWU_Data.xlsx"
+home2 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data/SWU_Data.xlsx"
 
 patient_rest_project <- read.xlsx2(home1, sheetIndex = 1, stringsAsFactors = FALSE,
   colClasses = c(rep("character", 2), rep("numeric", 2), rep("character", 2), rep("numeric", 27)))
