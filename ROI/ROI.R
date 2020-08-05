@@ -3,9 +3,9 @@ library(xlsx)
 library(dplyr)
 
 
-setwd("E:/WorkingSpace/R/Paper/Depression/ROI")
+setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/ROI")
 # Load data --------------------------------------------------------------------
-home1 <- "E:/WorkingSpace/R/Paper/Depression/HHC/HHC.xlsx"
+home1 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC/HHC.xlsx"
 # ROIs
 home2 <- "E:/WorkingSpace/R/Paper/Depression/ROI"
 
