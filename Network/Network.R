@@ -10,6 +10,7 @@ library(mgm)
 library(NetworkComparisonTest)
 library(bootnet)
 library(NetworkToolbox)
+library(networktools)
 library(ggplot2)
 library(patchwork)
 
