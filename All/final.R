@@ -156,7 +156,7 @@ PA$pc.values > threshold
 
 # Plot for parallel analysis; Figure S4
 pa_table <- data.frame(t(rbind(PA$pc.values, PA$pc.simr)))
-names(pa_table) <- c("Resample Data", "Acutual Data")
+names(pa_table) <- c("Acutual Data", "Resample Data")
 pa_table <- melt(pa_table)
 pa_table$Components <- rep(1:17, times = 2)
 
