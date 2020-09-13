@@ -108,8 +108,9 @@ res_nct[1, 3:8] <- c(nct_12$glstrinv.real, nct_12$glstrinv.pval,
   nct_12$nwinv.real,  nct_12$nwinv.pval, nct_12$glstrinv.sep)
 res_nct
 
+# Plot results of the network structure invariance test
 plot(nct_12, what = "network")
-# Plot results of global strength invariance test (not reliable with only 10 permutations!)
+# Plot results of global strength invariance test
 plot(nct_12, what = "strength")
 
 # Community Struture -----------------------------------------------------------

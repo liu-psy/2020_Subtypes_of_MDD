@@ -70,8 +70,8 @@ heatmap.2(hamdDist, Rowv = as.dendrogram(HHC), Colv = as.dendrogram(HHC),
   symm = TRUE, revC = TRUE, col = bluered(16), trace = "none", tracecol = NULL,
   labRow = NA, labCol = NA, keysize = 1, density.info = "none", key.title = NA, key.xlab = NA,
   key.xtickfun = function() {list(side = 1, padj = 0.8, labels = seq(0, 12, 2),
-    at = seq(0, 1, length.out = 7), cex.axis = 6, tck = 0.5, tcl = 1, font = 2,
-    lwd.ticks = 4, mtext("Euclidean Distance", side = 1, padj = 2, cex = 5, font = 2))},
+  at = seq(0, 1, length.out = 7), cex.axis = 6, tck = 0.5, tcl = 1, font = 2,
+  lwd.ticks = 4, mtext("Euclidean Distance", side = 1, padj = 2, cex = 5, font = 2))},
   key.par = list(mai = c(2, 0, 0, 0.65)), ColSideColors = color,
   lmat = rbind(c(4, 1), c(3, 2), c(0, 5)), lhei = c(0.2, 4, 0.8), lwid = c(0.2, 4))
 dev.off()

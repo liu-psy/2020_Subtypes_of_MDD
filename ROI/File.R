@@ -9,7 +9,7 @@ home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC/HHC.xlsx"
 patient <- read.xlsx2(home, 1, stringsAsFactors = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)), check.names = FALSE)
 
-patient$Sites <- factor(Patient$Sites, levels = 1:15)
+patient$Sites <- factor(patient$Sites, levels = 1:15)
 rm(home)
 
 # Check subgroups --------------------------------------------------------------

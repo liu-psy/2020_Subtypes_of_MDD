@@ -152,7 +152,7 @@ PA$pc.values > threshold
 
 # Plot for parallel analysis; Figure S4
 pa_table <- data.frame(t(rbind(PA$pc.values, PA$pc.simr)))
-names(pa_table) <- c("Resample Data", "Acutual Data")
+names(pa_table) <- c("Acutual Data", "Resampled Data")
 pa_table <- melt(pa_table)
 pa_table$Components <- rep(1:17, times = 2)
 
@@ -223,8 +223,6 @@ ggsave("Figure 1.pdf", width = 15, height = 8)
 
 patient <- cbind(patient, PCA$scores[, c(4, 1, 2, 3)])
 names(patient)[29:32] <- components
-
-rm(PA, PCA, loading, loading_matrix, components, Threshold, vars, hamd)
 
 # Add Sub-dimensions -----------------------------------------------------------
 patient <- patient %>% mutate("CD" = (X1 + X7), "ANX" = (X9 + X10 + X11 + X15),
