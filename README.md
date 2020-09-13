@@ -1,4 +1,4 @@
-# 2020_Subtypes_of_MDD
+# 2020_Symptom_Subtyping_MDD
 **All** folder contains An integrated version of all scripts
 
 ## Analysis
