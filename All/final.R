@@ -13,13 +13,13 @@ library(corrplot)
 
 
 # Set working directory
-setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/All")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/All")
 
 # Loading Data -----------------------------------------------------------------
 # Data of REST-meta-MDD
-home1 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/All/Depression.xlsx"
+home1 <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/All/Depression.xlsx"
 # Data of SWU
-home2 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/All/SWU_Data.xlsx"
+home2 <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/All/SWU_Data.xlsx"
 
 patient_rest_project <- read.xlsx2(home1, sheetIndex = 1, stringsAsFactors = FALSE,
   colClasses = c(rep("character", 2), rep("numeric", 2), rep("character", 2), rep("numeric", 27)))

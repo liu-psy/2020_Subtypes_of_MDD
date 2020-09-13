@@ -9,10 +9,10 @@ library(patchwork)
 
 
 # Set working directory
-setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC")
 
 # Load data --------------------------------------------------------------------
-home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC/HHC.xlsx"
+home <- "HHC.xlsx"
 patient <- read.xlsx2(home, 1,  stringsAsFactors = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)))
 # Modify variables

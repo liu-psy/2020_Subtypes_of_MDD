@@ -9,13 +9,13 @@ library(corrplot)
 
 
 # Set working directory
-setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
 
 # Loading Data -----------------------------------------------------------------
 # Data of REST-meta-MDD
-home1 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data/Depression.xlsx"
+home1 <- "Depression.xlsx"
 # Data of SWU
-home2 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data/SWU_Data.xlsx"
+home2 <- "SWU_Data.xlsx"
 
 patient_rest_project <- read.xlsx2(home1, sheetIndex = 1, stringsAsFactors = FALSE,
   colClasses = c(rep("character", 2), rep("numeric", 2), rep("character", 2), rep("numeric", 27)))
@@ -31,8 +31,11 @@ max <- apply(patient_rest_project[, 8:24], 1, max, na.rm = TRUE)
 patient_rest_project <- patient_rest_project[which(max != -Inf), ]
 
 # Replace the original data of SWU(S20)
-patient <- rbind(patient_rest_project[1:grep("S21", patient_rest_project$ID)[1] - 1, ], patient_swu,
-    patient_rest_project[grep("S21", patient_rest_project$ID)[1] : nrow(patient_rest_project), ])
+patient <- rbind(
+  patient_rest_project[1:grep("S21", patient_rest_project$ID)[1] - 1, ], 
+  patient_swu,
+  patient_rest_project[grep("S21", patient_rest_project$ID)[1] : nrow(patient_rest_project), ]
+)
 
 rm(home1, home2, patient_swu, patient_rest_project, max)
 

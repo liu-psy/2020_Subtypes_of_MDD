@@ -7,10 +7,10 @@ library(sjstats)     # Crame's V
 
 
 # Set working directory
-setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
 
 # Loading Data -----------------------------------------------------------------
-home <- "E:/WorkingSpace/R/Paper/Depression/Clean Data/Data.xlsx"
+home <- "Data.xlsx"
 patient <- read.xlsx2(home, 1,  stringsAsFactors = FALSE,
   colClasses = c(rep("character", 6), rep("numeric", 29)))
 

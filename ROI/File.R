@@ -3,9 +3,9 @@ library(xlsx)
 library(dplyr)
 
 
-setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/ROI")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/ROI")
 # Load data --------------------------------------------------------------------
-home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC/HHC.xlsx"
+home <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
 patient <- read.xlsx2(home, 1, stringsAsFactors = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)), check.names = FALSE)
 

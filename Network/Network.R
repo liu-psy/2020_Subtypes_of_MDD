@@ -15,9 +15,9 @@ library(ggplot2)
 library(patchwork)
 
 
-setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/Network")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Network")
 # Load Data --------------------------------------------------------------------
-home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC/HHC.xlsx"
+home <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
 patient <- read.xlsx2(home, 1, stringsAsFactors = FALSE, check.names = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)))
 

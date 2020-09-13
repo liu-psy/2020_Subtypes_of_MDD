@@ -9,9 +9,9 @@ library(clusteval)             # Robustness of clusering
 
 
 # Set working directory and load data ------------------------------------------
-setwd("E:/WorkingSpace/R/Paper/Depression0/Subtypes/HHC")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC")
 
-home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/Clean Data/Data.xlsx"
+home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/Cleandata/Data.xlsx"
 patient <- read.xlsx2(home, 1, stringsAsFactors = FALSE, check.names = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(6, 29)))
 

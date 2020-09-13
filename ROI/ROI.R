@@ -3,11 +3,11 @@ library(xlsx)
 library(dplyr)
 
 
-setwd("E:/WorkingSpace/R/Paper/Depression/Subtypes/ROI")
+setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/ROI")
 # Load data --------------------------------------------------------------------
-home1 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/HHC/HHC.xlsx"
+home1 <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
 # ROIs
-home2 <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/ROI/"
+home2 <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/ROI/"
 
 patient <- read.xlsx2(home1, 1, stringsAsFactors = FALSE, check.names = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)))
