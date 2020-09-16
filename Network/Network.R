@@ -17,7 +17,7 @@ library(patchwork)
 
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Network")
 # Load Data --------------------------------------------------------------------
-home <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
+home    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
 patient <- read.xlsx2(home, 1, stringsAsFactors = FALSE, check.names = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)))
 
@@ -37,14 +37,22 @@ LOI_cor <- cor_auto(LOI)
 SAI_cor <- cor_auto(SAI)
 
 # Estimate Joint Graphical Lasso model
-net <- EstimateGroupNetwork(list(LOI, SAI), inputType = "list.of.dataframes",
-  method = "crossvalidation", criterion = "ebic", gamma = 0.5,
-  simplifyOutput = FALSE, seed = 100, ncores = 16)
-net$network
+net <- EstimateGroupNetwork(
+  list(LOI, SAI), 
+  inputType = "list.of.dataframes",
+  method = "crossvalidation", 
+  criterion = "ebic", 
+  gamma = 0.5,
+  simplifyOutput = FALSE,
+  seed = 100, 
+  ncores = 16
+)
+LOI_net <- net$network[[1]]
+SAI_net <- net$network[[2]]
 
 # 1 for LOI; 2 for SAI
-nw1 <- getWmat(qgraph(net$network[[1]], sampleSize = nrow(LOI), DoNotPlot = TRUE))
-nw2 <- getWmat(qgraph(net$network[[2]], sampleSize = nrow(SAI), DoNotPlot = TRUE))
+nw1 <- getWmat(qgraph(LOI_net, sampleSize = nrow(LOI), DoNotPlot = TRUE))
+nw2 <- getWmat(qgraph(SAI_net, sampleSize = nrow(SAI), DoNotPlot = TRUE))
 
 Max <- max(c(nw1, nw2))
 Max
@@ -55,13 +63,13 @@ L <- averageLayout(nw1, nw2)
 # Mixed Graphical Models -------------------------------------------------------
 # 1 for LOI; 2 for SAI
 set.seed(1)
-fit1 <- mgm(LOI, type = rep('g', 17), level = rep(1, 17), lambdaSel = 'CV',
-  ruleReg = 'OR')
-fit2 <- mgm(SAI, type = rep('g', 17), level = rep(1, 17), lambdaSel = 'CV',
-  ruleReg = 'OR')
+fit1 <- mgm(LOI, type = rep('g', ncol(LOI)), level = rep(1, ncol(LOI)), 
+  lambdaSel = 'CV', ruleReg = 'OR')
+fit2 <- mgm(SAI, type = rep('g', ncol(SAI)), level = rep(1, ncol(SAI)), 
+  lambdaSel = 'CV', ruleReg = 'OR')
 
-pred1 <- predict(object = fit1, data = LOI, errorCon = 'R2')
-pred2 <- predict(object = fit2, data = SAI, errorCon = 'R2')
+pred1 <- predict(fit1, data = LOI, errorCon = 'R2')
+pred2 <- predict(fit2, data = SAI, errorCon = 'R2')
 
 pred1$error$R2
 vars[order(pred1$error$R2, decreasing = TRUE)]
@@ -73,14 +81,17 @@ round(mean(pred1$error$R2), 2)
 round(mean(pred2$error$R2), 2)
 
 # Plot networks; Figure 3A
+f1 <- function(data, title) {
+  network <- qgraph(data, layout = L, title = title, title.cex = 2.5,
+    maximum = Max,  theme = "Hollywood", pieColor = "#FC8D62", pie = pred1$error$R2,
+    border.width = 2, vsize = 9, label.cex = 1, tuning = 0.25)
+  return(network)
+}
+
 pdf("Figure 3a.pdf", width = 14, height = 8)
 par(mfrow = c(1, 2))
-gr1 <- qgraph(net$network[[1]], layout = L, title = "LOI", title.cex = 2.5,
-  maximum = Max,  theme = "Hollywood", pieColor = "#FC8D62", pie = pred1$error$R2,
-  border.width = 2, vsize = 9, label.cex = 1, tuning = 0.25)
-gr2 <- qgraph(net$network[[2]], layout = L, title = "SAI", title.cex = 2.5,
-  maximum = Max, theme = "Hollywood", pieColor = "#FC8D62", pie = pred2$error$R2,
-  border.width = 2, vsize = 9, label.cex = 1, tuning = 0.25)
+gr1 <- f1(LOI_net, "LOI")
+gr2 <- f1(SAI_net, "SAI")
 dev.off()
 
 # Correlations joint networks with each other
@@ -152,64 +163,56 @@ walkch
 
 # Sub-network structures -------------------------------------------------------
 # Minimum spanning trees -------------------------------------------------------
-md1 <- MaST(LOI, normal = TRUE, na.data = "none", depend = FALSE)
-a <- qgraph(md1, layout = "spring", DoNotPlot = TRUE)
-gmst1 <- as.igraph(a)
-V(gmst1)$name <- vars
-scale01 <- function(x) {(x - min(x))/(max(x) - min(x))}
-vSizes <- (scale01(apply(LOI, 1, mean)) + 1.0) * 10
-edgeweights <- gmst1$weight * 2.0
-
-md2 <- MaST(SAI, normal = TRUE, na.data = "none", depend = FALSE)
-b <- qgraph(md2, labels = colnames(SAI), DoNotPlot = TRUE)
-gmst2 <- as.igraph(b)
-vSizes <- (scale01(apply(SAI, 1, mean)) + 1.0) * 10
-edgeweights <- gmst2$weight * 2.0
-
 # Figure S7
+f2 <- function(data, title) {
+  # Maximum Spanning Tree
+  md <- MaST(data, normal = TRUE, na.data = "none", depend = FALSE)
+  result <- qgraph(md, title = title, layout = "spring", labels = TRUE, 
+    edge.labels = TRUE, label.cex = 2, edge.label.cex = 1.5, vsize = 7, 
+    esize = 9, label.color = "black", theme = "gimme" , borders = TRUE, 
+    title.cex = 3)
+  return(result)
+}
+
 pdf("Figure S7.pdf", width = 14, height = 14)
 par(mfrow = c(2, 1))
-dd <- qgraph(md1, layout = "spring", labels = TRUE, edge.labels = TRUE, label.cex = 2,
-  edge.label.cex = 1.5, vsize = 7, esize = 9, label.color = "black",
-  theme = "gimme" , borders = TRUE, title = "LOI", title.cex = 3)
-qgraph(md2, layout = "spring", labels = TRUE, edge.labels = TRUE, label.cex = 2,
-  edge.label.cex = 1.5, vsize = 7, esize = 9, label.color = "black",
-  theme = "gimme" , borders = TRUE, title = "SAI", title.cex = 3)
+f2(LOI, "LOI")
+f2(SAI, "SAI")
 dev.off()
 
 # Estimate and plot centrality -------------------------------------------------
 # 1 for LOI; 2 for SAI
 # plot themes
 themes <- theme(
-  legend.title = element_blank(),
-  legend.position = c(0.95, 0.95),
-  legend.text = element_text(size = 15, face = "bold"),
-  panel.grid.minor = element_blank(),
-  axis.text.x = element_text(size = 12),
-  axis.title.x = element_blank(),
-  axis.text.y = element_text(face = "bold", size = 12),
-  axis.title.y = element_blank(),
-  strip.text = element_text(size = 15),
-  strip.background = element_blank(),
-  strip.placement = "outside",
-  axis.line = element_line(colour = "black", size = 1, linetype = "solid"),
-  panel.background = element_rect(fill = "white"),
-  panel.grid.major.y = element_line(colour = "black", size = 0.5)
+  legend.title       = element_blank(),
+  legend.position    = c(0.95, 0.95),
+  legend.text        = element_text(size = 15, face = "bold"),
+  panel.grid.minor   = element_blank(),
+  axis.text.x        = element_text(size = 12),
+  axis.title.x       = element_blank(),
+  axis.text.y        = element_text(face = "bold", size = 12),
+  axis.title.y       = element_blank(),
+  strip.text         = element_text(size = 15),
+  strip.background   = element_blank(),
+  strip.placement    = "outside",
+  axis.line          = element_line(color = "black", size = 1, linetype = "solid"),
+  panel.background   = element_rect(fill = "white"),
+  panel.grid.major.y = element_line(color = "black", size = 0.5)
 )
 
 # Standardized
-centra1 <- centralityTable(gr1)
-centra2 <- centralityTable(gr2)
+centra1       <- centralityTable(gr1)
+centra2       <- centralityTable(gr2)
 centra2$graph <- "graph 2"
 
-centra <- rbind(centra1, centra2)
-centra$node <- factor(centra$node, levels = paste0("X", 1:17))
-centra$graph <- factor(centra$graph, labels = c("LOI", "SAI"))
+centra        <- rbind(centra1, centra2)
+centra$node   <- factor(centra$node, levels = paste0("X", 1:17))
+centra$graph  <- factor(centra$graph, labels = c("LOI", "SAI"))
 
 # Replace expected influence (step1) with expected influence (step2)
 ef1 <- expectedInf(gr1, step = "both", directed = FALSE)$step2
 ef2 <- expectedInf(gr2, step = "both", directed = FALSE)$step2
-ef <- c(scale(ef1), scale(ef2))
+ef  <- c(scale(ef1), scale(ef2))
 centra[centra$measure == "ExpectedInfluence", ]$value <- ef
 
 # Figure 3B
@@ -222,13 +225,13 @@ ggplot(centra, aes(node, value, group = graph, color = graph)) +
 ggsave("Figure 3B.pdf", width = 14, height = 8)
 
 # Unstandardized
-us_centra1 <- centralityTable(gr1, standardized = FALSE)
-us_centra2 <- centralityTable(gr2, standardized = FALSE)
+us_centra1       <- centralityTable(gr1, standardized = FALSE)
+us_centra2       <- centralityTable(gr2, standardized = FALSE)
 us_centra2$graph <- "graph 2"
 
-us_centra <- rbind(us_centra1, us_centra2)
-us_centra$node <- factor(us_centra$node, levels = paste0("X", 1:17))
-us_centra$graph <- factor(us_centra$graph, labels = c("LOI", "SAI"))
+us_centra        <- rbind(us_centra1, us_centra2)
+us_centra$node   <- factor(us_centra$node, levels = paste0("X", 1:17))
+us_centra$graph  <- factor(us_centra$graph, labels = c("LOI", "SAI"))
 
 # Replace expected influence (step1) with expected influence (step2)
 us_ef <- c(ef1, ef2)
@@ -292,18 +295,19 @@ plot(network1b, layout = "spring", labels = TRUE)
 plot(network2b, layout = "spring", labels = TRUE)
 
 kboot1a <- bootnet(network1b, nBoots = 1000, nCores = 16)
-kboot1b <- bootnet(network1b, nBoots = 1000, type = "case", nCores = 16)
+kboot1b <- bootnet(network1b, nBoots = 1000, nCores = 16, type = "case")
 
 kboot2a <- bootnet(network2b, nBoots = 1000, nCores = 16)
-kboot2b <- bootnet(network2b, nBoots = 1000, type = "case", nCores = 16)
+kboot2b <- bootnet(network2b, nBoots = 1000, nCores = 16, type = "case")
 
 # Plot edge weight CI; Figure S9
-p1 <- plot(kboot1a, labels = FALSE, order = "sample") +
-  labs(x = "LOI") +
-  theme(axis.title.x = element_text(face = "bold", size = 15))
-p2 <- plot(kboot2a, labels = FALSE, order = "sample", legend = FALSE) +
-  labs(x = "SAI") +
-  theme(axis.title.x = element_text(face = "bold", size = 15))
+f3 <- function(data, xlab) {
+  plot(data, labels = FALSE, order = "sample") +
+    labs(x = xlab) +
+    theme(axis.title.x = element_text(face = "bold", size = 15))
+}
+p1 <- f3(kboot1a, "LOI")
+p2 <- f3(kboot2a, "SAI")
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S9.pdf", width = 10, height = 12)
@@ -311,27 +315,26 @@ ggsave("Figure S9.pdf", width = 10, height = 12)
 # Plot centrality stability (Strength); Figure S10
 # Plot themes
 themes <- theme(
-  panel.grid.minor = element_blank(),
-  axis.title.x = element_text(face = "bold", size = 15),
-  axis.text.x = element_text(size = 12),
-  axis.title.y = element_text(face = "bold", size = 15),
-  axis.text.y = element_text(face = "bold", size = 12),
-  axis.line = element_line(colour = "black", size = 1, linetype = "solid"),
-  panel.background = element_rect(fill = "white"),
-  panel.grid.major.y = element_line(colour = "black", size = 0.5)
+  panel.grid.minor   = element_blank(),
+  axis.title.x       = element_text(face = "bold", size = 15),
+  axis.text.x        = element_text(size = 12),
+  axis.title.y       = element_text(face = "bold", size = 15),
+  axis.text.y        = element_text(face = "bold", size = 12),
+  axis.line          = element_line(color = "black", size = 1, linetype = "solid"),
+  panel.background   = element_rect(fill = "white"),
+  panel.grid.major.y = element_line(color = "black", size = 0.5)
 )
 
-p1 <- plot(kboot1b, legend = FALSE) +
-  labs(x = "Sampled People (LOI)") +
-  geom_line(size = 1.5, color = "#E41A1C") +
-  geom_point(size = 2, color = "#E41A1C") +
-  themes
-
-p2 <- plot(kboot2b, legend = FALSE) +
-  labs(x = "Sampled People (SAI)") +
-  geom_line(size = 1.5, color = "#377EB8") +
-  geom_point(size = 2, color = "#377EB8") +
-  themes
+# Figure S10
+f4 <- function(data, xlab) {
+  plot(data, legend = FALSE) +
+    labs(x = xlab) +
+    geom_line(size = 1.5, color = "#E41A1C") +
+    geom_point(size = 2, color = "#E41A1C") +
+    themes
+}
+p1 <- f4(kboot1b, "Sampled People (LOI)")
+p2 <- f4(kboot2b, "Sampled People (SAI)")
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S10.pdf", width = 12, height = 10)
@@ -339,7 +342,7 @@ ggsave("Figure S10.pdf", width = 12, height = 10)
 # Centrality stability coefficient
 cs1 <- corStability(kboot1b)
 cs2 <- corStability(kboot2b)
-cs <- matrix(nrow = 2, ncol = 2)
+cs  <- matrix(nrow = 2, ncol = 2)
 cs[1, 1:2] <- round(cs1, digits = 3)
 cs[2, 1:2] <- round(cs2, digits = 3)
 colnames(cs) <- c("Edge", "Stregnth")
@@ -347,26 +350,26 @@ rownames(cs) <- c("LOI", "SAI")
 cs
 
 # Edge weights diff test; Figure S11
-p1 <- plot(kboot1a, "edge", plot = "difference", onlyNonZero = TRUE,
-  order = "sample", panels = FALSE) +
-  labs(x = "LOI") +
-  theme(axis.title.x = element_text(face = "bold", size = 15))
-
-p2 <- plot(kboot2a, "edge", plot = "difference", onlyNonZero = TRUE,
-  order = "sample", panels = FALSE) +
-  labs(x = "SAI") +
-  theme(axis.title.x = element_text(face = "bold", size = 15))
+f5 <- function(data, xlab) {
+  plot(data, "edge", plot = "difference", onlyNonZero = TRUE,
+    order = "sample", panels = FALSE) +
+    labs(x = xlab) +
+    theme(axis.title.x = element_text(face = "bold", size = 15))
+}
+p1 <- f5(kboot1a, "LOI")
+p2 <- f5(kboot2a, "SAI")
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S11.pdf", width = 8, height = 12)
 
 # Centrality diff test (Strength); Figure S12
-p1 <- plot(kboot1a, "strength", order = "sample", labels = TRUE, panels = FALSE) +
-  labs(x = "LOI") +
-  theme(axis.title.x = element_text(face = "bold", size = 15))
-p2 <- plot(kboot2a, "strength", order = "sample", labels = TRUE, panels = FALSE) +
-  labs(x = "SAI") +
-  theme(axis.title.x = element_text(face = "bold", size = 15))
+f6 <- function(data, xlab) {
+  plot(data, "strength", order = "sample", labels = TRUE, panels = FALSE) +
+    labs(x = xlab) +
+    theme(axis.title.x = element_text(face = "bold", size = 15))
+}
+p1 <- f6(kboot1a, "LOI")
+p2 <- f6(kboot2a, "SAI")
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S12.pdf", width = 8, height = 12)
