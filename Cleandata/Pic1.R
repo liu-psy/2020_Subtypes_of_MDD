@@ -1,10 +1,9 @@
 # This script is used to plot site information
-library(xlsx)
 library(dplyr)
 library(ggplot2)
-library(RColorBrewer)
 library(patchwork)
-
+library(RColorBrewer)
+library(xlsx)
 
 # Set working directory
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")

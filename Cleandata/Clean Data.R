@@ -1,12 +1,11 @@
 # This script was used to data clean
-library(xlsx)
+library(corrplot)
 library(dplyr)
+library(ggplot2)
 library(mice)                 # Imputation
 library(psych)                # PCA
 library(reshape2)
-library(ggplot2)
-library(corrplot)
-
+library(xlsx)
 
 # Set working directory
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
@@ -199,6 +198,7 @@ components <- c("Guilt", "Insomnia", "Somatic and Anxiety", "Interests Loss")
 # Modify components position
 loading_matrix <- PCA$loadings[, c(4, 1, 2, 3)]
 colnames(loading_matrix) <- components
+write.csv(loading_matrix, "Loading.csv", row.names = FALSE)
 
 # Plot loading matrix, Figure 1
 # This code is inspired by https://rpubs.com/danmirman/plotting_factor_analysis

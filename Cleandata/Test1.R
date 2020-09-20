@@ -1,10 +1,9 @@
 # This script was used to gender analysis
-library(xlsx)
 library(dplyr)
 library(psych)
 library(effsize)     # Cohen's d
 library(sjstats)     # Crame's V
-
+library(xlsx)
 
 # Set working directory
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
