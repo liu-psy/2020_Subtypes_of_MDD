@@ -198,13 +198,13 @@ plot(nct, what = "strength")
 # 1 for LOI; 2 for SAI
 kboot1a <- bootnet(q1, nBoots = 1000, nCores = 16)
 kboot1b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case", 
-  statistics = c("strength", "closeness", "betweenness", "expectedInfluence"), 
-  communities = groups)
+  statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
+  )
 
 kboot2a <- bootnet(q1, nBoots = 1000, nCores = 16)
 kboot2b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case", 
-  statistics = c("strength", "closeness", "betweenness", "expectedInfluence"),
-  communities = groups)
+  statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
+  )
 
 # Plot edge weight CI; Figure S7
 f5 <- function(data, xlab) {
