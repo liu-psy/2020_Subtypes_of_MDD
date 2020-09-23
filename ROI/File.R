@@ -16,7 +16,7 @@ rm(home)
 # 1 for LOI;2 for SAI
 with(patient, ftable(Level1))
 # 1vs4  2vs3. 1 for LOI+; 4 for LOI-; 3 for SAI+; 4 for SAI-
-with(patient, ftable(Level1, Level2))   
+with(patient, ftable(Level1, Level2))
 
 # Function factory -------------------------------------------------------------
 extract <- function(vars) {
@@ -68,11 +68,11 @@ Covariates$`2_14`$Sites <- Sites
 # Output -----------------------------------------------------------------------
 # Covariates for t-test
 for (i in seq(Covariates)) {
-  write.table(Covariates[[i]], paste0("Covariates", names(Covariates)[[i]], ".txt"), 
+  write.table(Covariates[[i]], paste0("Covariates", names(Covariates)[[i]], ".txt"),
     quote = FALSE, row.names = FALSE, col.names = FALSE)
-}                                                           
+}
 # SPM file directory
 for (i in seq(Dirs)) {
-  write.table(Dirs[[i]], paste0("Dirs", names(Dirs)[[i]], ".txt"), 
+  write.table(Dirs[[i]], paste0("Dirs", names(Dirs)[[i]], ".txt"),
     quote = FALSE, row.names = FALSE, col.names = FALSE)
 }

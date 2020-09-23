@@ -43,7 +43,7 @@ Male <- patient[patient$Gender == "Male", ]
 Female <- patient[patient$Gender == "Female", ]
 
 # Gender Distribution
-chisq.test(table(patient$Gender, patient$Sites)) 
+chisq.test(table(patient$Gender, patient$Sites))
 
 # Multiply t-tests
 m_ttest <- function(data1, data2, x) {

@@ -29,10 +29,10 @@ LOI <- subset(patient, Level1 == 1, X1:X17)
 SAI <- subset(patient, Level1 == 2, X1:X17)
 
 # Items of HAMD-17
-vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia", 
-  "Middle Insomnia", "Late Insomnia", "Work Interests", "Retardation", 
-  "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal", 
-  "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss", 
+vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
+  "Middle Insomnia", "Late Insomnia", "Work Interests", "Retardation",
+  "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal",
+  "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss",
   "Loss of Insight")
 
 rm(home1, home2, loading)
@@ -42,7 +42,7 @@ rm(home1, home2, loading)
 # glasso Models with EBIC ------------------------------------------------------
 # 1 for LOI; 2 for SAI
 gr1 <- LOI %>% cor_auto() %>% EBICglasso(n = nrow(LOI))
-gr2 <- SAI %>% cor_auto() %>% EBICglasso(n = nrow(SAI)) 
+gr2 <- SAI %>% cor_auto() %>% EBICglasso(n = nrow(SAI))
 
 # Layout of networks
 Max <- max(c(gr1, gr2))
@@ -52,18 +52,18 @@ L   <- averageLayout(gr1, gr2)
 set.seed(1)
 f1 <- function(subtype) {
   # Mixed Graphical Models
-  fit    <- mgm(subtype, type = rep("g", ncol(subtype)), level = rep(1, ncol(subtype)), 
+  fit    <- mgm(subtype, type = rep("g", ncol(subtype)), level = rep(1, ncol(subtype)),
     lambdaSel = "CV", ruleReg = "OR")
   pred   <- predict(fit, data = subtype, errorCon = "R2")
   result <- pred$error$R2
   names(result) <- paste(1:17, vars)
-  
+
   # Output in descending order according to centrality
   cat("\n\n\n", substitute(subtype), ":", "\n")
   print(result[order(result, decreasing = TRUE)])
   # Average node predictability
   cat("\n", substitute(subtype), "average node predictability:", round(mean(result), 2), "\n")
-  
+
   return(result)
 }
 
@@ -75,7 +75,7 @@ predicability2 <- f1(SAI)
 colors <- brewer.pal(4, "Pastel1")
 f2 <- function(net, title, pred) {
   network <- qgraph(net, title = title, pie = pred, layout = L, title.cex = 2.5,
-    maximum = Max, theme = "Hollywood", pieColor = "#FC8D62", border.width = 2, 
+    maximum = Max, theme = "Hollywood", pieColor = "#FC8D62", border.width = 2,
     vsize = 9, label.cex = 1, groups = group, color = colors, labels = paste0("X", 1:17)
   )
   return(network)
@@ -138,11 +138,11 @@ ggsave("Figure S6.pdf", width = 14, height = 8)
 centralities <- c("Betweenness", "Closeness", "ExpectedInfluence", "Strength")
 centra$node  <- rep(vars, times = 8)
 
-centra_list  <- centra %>% 
+centra_list  <- centra %>%
   select(-type) %>%
-  group_by(graph, measure) %>% 
-  select(graph, measure, node, value) %>% 
-  mutate(rank = rank(value, na.last = FALSE)) %>% 
+  group_by(graph, measure) %>%
+  select(graph, measure, node, value) %>%
+  mutate(rank = rank(value, na.last = FALSE)) %>%
   group_split()
 # Add labels of each list
 names(centra_list) <- paste0(rep(c("LOI", "SAI"), each = 4), "_", rep(centralities, times = 2))
@@ -153,7 +153,7 @@ f4 <- function(centrality){
   x1   <- centra_list[[var1]]$value
   var2 <- paste0("SAI_", centrality)
   x2   <- centra_list[[var2]]$value
-  
+
   # Comupute perason corelation between two networks (NA is ignored)
   cors <- cor(x1, x2, use = "pairwise.complete.obs") %>%
     round(2)
@@ -171,13 +171,13 @@ f5 <- function(subtype) {
     centra_list[[subtype_centralities[2]]]$rank +
     centra_list[[subtype_centralities[3]]]$rank +
     centra_list[[subtype_centralities[4]]]$rank
-  
+
   result         <- round(result / length(centralities), 1)
   names(result)  <- vars
   # Sorting results
   ordered_result <- result[order(result, decreasing = TRUE)]
   result_list    <- list("Origin" = result, "Ordered" = ordered_result)
-  
+
   return(result_list)
 }
 f5("LOI")
@@ -207,12 +207,12 @@ plot(nct, what = "strength")
 # Stability estimates ----------------------------------------------------------
 # 1 for LOI; 2 for SAI
 kboot1a <- bootnet(q1, nBoots = 1000, nCores = 16)
-kboot1b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case", 
+kboot1b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case",
   statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
   )
 
 kboot2a <- bootnet(q1, nBoots = 1000, nCores = 16)
-kboot2b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case", 
+kboot2b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case",
   statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
   )
 

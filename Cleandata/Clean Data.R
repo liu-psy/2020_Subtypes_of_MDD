@@ -31,7 +31,7 @@ patient_rest_project <- patient_rest_project[which(max != -Inf), ]
 
 # Replace the original data of SWU(S20)
 patient <- rbind(
-  patient_rest_project[1:grep("S21", patient_rest_project$ID)[1] - 1, ], 
+  patient_rest_project[1:grep("S21", patient_rest_project$ID)[1] - 1, ],
   patient_swu,
   patient_rest_project[grep("S21", patient_rest_project$ID)[1] : nrow(patient_rest_project), ]
 )

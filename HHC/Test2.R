@@ -53,7 +53,7 @@ mtest <- function(Level, cluster1, cluster2, x) {
   results <- matrix(nrow = length(x), ncol = 7)
   colnames(results) <- c("Stat", "df", "P", "Lower", "Upper", "d", "P(corrected)")
   rownames(results) <- x
-  
+
   for (i in seq(x)) {
     t <- t.test(group1[[x[i]]], group2[[x[i]]])
     d <- cohen.d(group1[[x[i]]], group2[[x[i]]])
