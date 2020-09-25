@@ -5,5 +5,5 @@ The thrid stage of the whole working
 **HHC.xlsx**: created by HHC.R
 
 # Script
-**Network.R**: network analysis and plot 
+**Network.R**: network analysis and plot
 

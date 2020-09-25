@@ -52,8 +52,13 @@ L   <- averageLayout(gr1, gr2)
 set.seed(1)
 f1 <- function(subtype) {
   # Mixed Graphical Models
-  fit    <- mgm(subtype, type = rep("g", ncol(subtype)), level = rep(1, ncol(subtype)),
-    lambdaSel = "CV", ruleReg = "OR")
+  fit    <- mgm(
+    subtype,
+    type = rep("g", ncol(subtype)),
+    level = rep(1, ncol(subtype)),
+    lambdaSel = "CV",
+    ruleReg = "OR"
+    )
   pred   <- predict(fit, data = subtype, errorCon = "R2")
   result <- pred$error$R2
   names(result) <- paste(1:17, vars)
@@ -74,9 +79,10 @@ predicability2 <- f1(SAI)
 # Plot networks; Figure 3A
 colors <- brewer.pal(4, "Pastel1")
 f2 <- function(net, title, pred) {
-  network <- qgraph(net, title = title, pie = pred, layout = L, title.cex = 2.5,
-    maximum = Max, theme = "Hollywood", pieColor = "#FC8D62", border.width = 2,
-    vsize = 9, label.cex = 1, groups = group, color = colors, labels = paste0("X", 1:17)
+  network <- qgraph(net, title = title, pie = pred, layout = L,
+    title.cex = 2.5, maximum = Max, theme = "Hollywood",
+    pieColor = "#FC8D62", border.width = 2, vsize = 9, label.cex = 1,
+    groups = group, color = colors, labels = paste0("X", 1:17)
   )
   return(network)
 }
@@ -145,10 +151,14 @@ centra_list  <- centra %>%
   mutate(rank = rank(value, na.last = FALSE)) %>%
   group_split()
 # Add labels of each list
-names(centra_list) <- paste0(rep(c("LOI", "SAI"), each = 4), "_", rep(centralities, times = 2))
+names(centra_list) <- paste0(
+  rep(c("LOI", "SAI"), each = 4),
+  "_",
+  rep(centralities, times = 2)
+)
 centra_list
 
-f4 <- function(centrality){
+f4 <- function(centrality) {
   var1 <- paste0("LOI_", centrality)
   x1   <- centra_list[[var1]]$value
   var2 <- paste0("SAI_", centrality)
@@ -198,7 +208,6 @@ nct$diffcen.pval
 # Differences of local nodes; LOI - SAI
 round(nct$diffcen.real, 3)
 
-
 # Plot results of the network structure invariance test
 plot(nct, what = "network")
 # Plot results of global strength invariance test
@@ -231,8 +240,8 @@ ggsave("Figure S7.pdf", width = 10, height = 12)
 # Plot themes
 themes <- theme(
   panel.grid.minor   = element_blank(),
-  axis.title.x       = element_text(face = "bold", size = 15),
   axis.text.x        = element_text(size = 12),
+  axis.title.x       = element_text(face = "bold", size = 15),
   axis.title.y       = element_text(face = "bold", size = 15),
   axis.text.y        = element_text(face = "bold", size = 12),
   axis.line          = element_line(color = "black", size = 1, linetype = "solid"),

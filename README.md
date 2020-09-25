@@ -11,4 +11,4 @@
 
 **Note**: The *xlsx* package needs configuration the *java* operation environment. And the *readxl* package can repalce it. Or you can convert .xlsx to .csv or other formats.
  
-**OS**: Windows 10 
+**OS**: Windows 10

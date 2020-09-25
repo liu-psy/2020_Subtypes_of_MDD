@@ -9,16 +9,19 @@ library(xlsx)
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
 
 # Loading Data -----------------------------------------------------------------
-home <- "Data.xlsx"
+home    <- "Data.xlsx"
 patient <- read.xlsx2(home, 1,  stringsAsFactors = FALSE,
   colClasses = c(rep("character", 6), rep("numeric", 29)))
 
 patient$Gender <- factor(patient$Gender, levels = c(1, 2), labels = c("Male", "Female"))
-patient$Sites <- factor(patient$Sites, levels = 1:15)
-hamd_vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia", "Middle Insomnia",
-  "Late Insomnia", "Work Interests", "Retardation", "Agitation", "Psychic Anxiety",
-  "Somatic Anxiety", "Gastrointestinal", "General Somatic", "Loss of Libido",
-  "Hypochondriasis", "Weight Loss", "Loss of Insight")
+patient$Sites  <- factor(patient$Sites, levels = 1:15)
+
+# Items of HAMD-17
+hamd_vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
+  "Middle Insomnia", "Late Insomnia", "Work Interests", "Retardation",
+  "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal",
+  "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss",
+  "Loss of Insight")
 names(patient)[11:27] <- paste(1:17, hamd_vars)
 
 rm(home)
@@ -31,9 +34,13 @@ table(patient$Sites, patient$Episode)
 table(patient$Sites, patient$Episode)
 table(patient$Sites, patient$Medication)
 
-patient %>% select(Age, Education, HAMD, Sites) %>% group_by(Sites) %>%
+patient %>%
+  select(Age, Education, HAMD, Sites) %>%
+  group_by(Sites) %>%
   summarise_all(mean)
-patient %>% select(Age, Education, HAMD, Sites) %>% group_by(Sites) %>%
+patient %>%
+  select(Age, Education, HAMD, Sites) %>%
+  group_by(Sites) %>%
   summarise_all(sd)
 
 lapply(c("Age", "Education", "HAMD"), function(x) describe(patient[[x]]))

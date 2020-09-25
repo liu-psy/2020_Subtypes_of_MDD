@@ -11,15 +11,17 @@ library(xlsx)
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
 
 # Loading Data -----------------------------------------------------------------
-# Data of REST-meta-MDD
 home1 <- "Depression.xlsx"
-# Data of SWU
 home2 <- "SWU_Data.xlsx"
 
+# Data of REST-meta-MDD
 patient_rest_project <- read.xlsx2(home1, sheetIndex = 1, stringsAsFactors = FALSE,
-  colClasses = c(rep("character", 2), rep("numeric", 2), rep("character", 2), rep("numeric", 27)))
+  colClasses = c(rep("character", 2), rep("numeric", 2), rep("character", 2),
+  rep("numeric", 27)))
 # Exclude irrelevant variables
 patient_rest_project <- subset(patient_rest_project, select = -c(HAMD, HAMA, X18:X24))
+
+# Data of SWU
 patient_swu <- read.xlsx2(home2, sheetIndex = 1, stringsAsFactors = FALSE,
   colClasses = c(rep("character", 2), rep("numeric", 2), "character", "numeric",
   "character", rep("numeric", 17)))
@@ -164,14 +166,16 @@ ggplot(pa_table, aes(Components, value, color = variable)) +
   scale_x_continuous(breaks = 1:17) +
   scale_y_continuous(breaks = seq(0, 3, by = 0.5)) +
   labs(y = "Eigen value") +
-  theme(title = element_text(size = 30),
-    text = element_text(size = 30),
-    legend.position = c(0.8, 0.8),
-    legend.title = element_blank(),
-    axis.text.y = element_text(size = 30),
-    axis.text.x = element_text(size = 25),
-    axis.line = element_line(colour = "black", size = 1, linetype = "solid"),
-    panel.background = element_rect(fill = "white"))
+  theme(
+    title            = element_text(size = 30),
+    text             = element_text(size = 30),
+    legend.position  = c(0.8, 0.8),
+    legend.title     = element_blank(),
+    axis.text.y      = element_text(size = 30),
+    axis.text.x      = element_text(size = 25),
+    axis.line        = element_line(colour = "black", size = 1, linetype = "solid"),
+    panel.background = element_rect(fill = "white")
+    )
 ggsave("Figure S4.pdf", width = 15, height = 8)
 
 # promax rotation
@@ -215,11 +219,11 @@ ggplot(loading, aes(vars, value, fill = value)) +
   scale_fill_gradient2(high = "red", mid = "white", low = "blue", midpoint = 0,
     guide = FALSE) +
   theme(
-    title = element_text(size = 20),
-    text = element_text(size = 20),
-    axis.text.y = element_text(size = 15),
-    axis.text.x = element_text(size = 12),
-    axis.line = element_line(colour = "black", size = 1, linetype = "solid"),
+    title            = element_text(size = 20),
+    text             = element_text(size = 20),
+    axis.text.y      = element_text(size = 15),
+    axis.text.x      = element_text(size = 12),
+    axis.line        = element_line(colour = "black", size = 1, linetype = "solid"),
     panel.background = element_rect(fill = "white")
   )
 ggsave("Figure 1.pdf", width = 15, height = 8)

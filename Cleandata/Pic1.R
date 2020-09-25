@@ -20,13 +20,15 @@ rm(home)
 
 ## Site information -------------------------------------------------------------
 # plot theme -------------------------------------------------------------------
-themes <-  theme(text = element_text(size = 25),
-  legend.position = c(0.9, 0.9),
-  legend.title = element_blank(),
-  axis.text.x = element_text(size = 20, face = "bold", color = "black"),
+themes <- theme(
+  legend.position  = c(0.9, 0.9),
+  legend.title     = element_blank(),
+  text             = element_text(size = 25),
+  axis.text.x      = element_text(size = 20, face = "bold", color = "black"),
   axis.text.y.left = element_text(size = 15, face = "bold"),
-  axis.line = element_line(colour = "black", size = 1, linetype = "solid"),
-  panel.background = element_rect(fill = "white"))
+  axis.line        = element_line(color = "black", size = 1, linetype = "solid"),
+  panel.background = element_rect(fill = "white")
+  )
 
 # Sample distribution per site and Gender distribution per site; Figure S2
 table1 <- patient %>% select(Sites) %>% group_by(Sites) %>% summarise(Count = n())
@@ -41,8 +43,8 @@ p1 <- ggplot(table1, aes(Sites, Count, fill = Sites)) +
 
 p2 <- ggplot(patient, aes(Sites, fill = Gender)) +
   geom_bar(stat = "count", width = 0.7, alpha = 0.8) +
-  scale_y_continuous(breaks = seq(0, 150, 5)) +
   labs(y = "") +
+  scale_y_continuous(breaks = seq(0, 150, 5)) +
   scale_fill_brewer(palette = "Set1") +
   themes
 

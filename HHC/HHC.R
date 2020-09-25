@@ -50,10 +50,14 @@ round(cluster_similarity(labels1 = labels[, 2], labels2 = labels4, similarity = 
 
 # Plot Dendrogram; Figure 2A ---------------------------------------------------
 pdf("Dendrogram.pdf", width = 10, height = 10)
-HHC %>% as.dendrogram() %>% set("branches_k_color", c("#2166AC", "#B30000"), k = 2) %>%
+HHC %>%
+  as.dendrogram() %>%
+  set("branches_k_color", c("#2166AC", "#B30000"), k = 2) %>%
   set("branches_k_color", c("#92C5DE", "#4393C3", "#EF3B2C", "#FC9272"), k = 4) %>%
-  set("branches_k_lty", rep("twodash", 2), k = 2) %>% set("branches_lwd", 10) %>%
-  set("labels", rep("", nrow(hamdDist))) %>% plot()
+  set("branches_k_lty", rep("twodash", 2), k = 2) %>%
+  set("branches_lwd", 10) %>%
+  set("labels", rep("", nrow(hamdDist))) %>%
+  plot()
 abline(h = 1.5e5, lwd = 4, lty = 4)
 text(20, 1.7e5, "k = 4", cex = 2, font = 2)
 abline(h = 3.5e5, lwd = 4, lty = 4)
