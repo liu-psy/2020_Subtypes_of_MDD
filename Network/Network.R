@@ -199,10 +199,12 @@ q1 <- estimateNetwork(LOI, "EBICglasso", corMethod = "cor_auto")
 q2 <- estimateNetwork(SAI, "EBICglasso", corMethod = "cor_auto")
 
 # NCT with 10000 iterations
-nct <- NCT(q1, q2, it = 1000, progressbar = TRUE, test.centrality = TRUE,
+nct <- NCT(q1, q2, it = 1000, progressbar = TRUE, test.edges = TRUE, test.centrality = TRUE,
   centrality = c("closeness", "betweenness", "strength", "expectedInfluence"))
 summary(nct)
 
+# p-value of edge differences
+nct$einv.pvals[nct$einv.pvals$`p-value` <=0.05, ]
 # p-values of local nodes
 nct$diffcen.pval
 # Differences of local nodes; LOI - SAI
