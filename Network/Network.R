@@ -61,7 +61,7 @@ f1 <- function(subtype) {
     )
   pred   <- predict(fit, data = subtype, errorCon = "R2")
   result <- pred$error$R2
-  names(result) <- paste(1:17, vars)
+  names(result) <- paste(seq(LOI), vars)
 
   # Output in descending order according to centrality
   cat("\n\n\n", substitute(subtype), ":", "\n")
@@ -82,7 +82,7 @@ f2 <- function(net, title, pred) {
   network <- qgraph(net, title = title, pie = pred, layout = L,
     title.cex = 2.5, maximum = Max, theme = "Hollywood",
     pieColor = "#FC8D62", border.width = 2, vsize = 9, label.cex = 1,
-    groups = group, color = colors, labels = paste0("X", 1:17)
+    groups = group, color = colors, labels = paste0("X", seq(LOI))
   )
   return(network)
 }
@@ -218,11 +218,11 @@ plot(nct, what = "strength")
 # Stability estimates ----------------------------------------------------------
 # 1 for LOI; 2 for SAI
 kboot1a <- bootnet(q1, nBoots = 1000, nCores = 16)
-kboot1b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case",
+kboot1b <- bootnet(q1, nBoots = 1000, nCores = 16, type = "case",
   statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
   )
 
-kboot2a <- bootnet(q1, nBoots = 1000, nCores = 16)
+kboot2a <- bootnet(q2, nBoots = 1000, nCores = 16)
 kboot2b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case",
   statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
   )
