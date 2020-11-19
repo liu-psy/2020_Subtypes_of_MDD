@@ -9,6 +9,6 @@
 
 **Packages**:xlsx, dplyr, mice, psych, reshape2, ggplot2, corrplot, effsize, sjstats, RColorBrewer, patchwork, hybridHclust, dynamicTreeCut, gplots, dendextend, clusteval, ggradar, qgraph, igraph, mgm, NetworkComparisonTest, bootnet
 
-**Note**: The *xlsx* package needs configuration the *java* operation environment. And the *readxl* package can repalce it. Or you can convert .xlsx to .csv or other formats.
+**Note**: The *xlsx* package needs to configure *java* operating environment. And the *readxl* package can repalce it. Or you can convert .xlsx to .csv or other formats.
  
 **OS**: Windows 10
