@@ -17,7 +17,7 @@ home1    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
 patient  <- read.xlsx2(home1, 1, stringsAsFactors = FALSE, check.names = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)))
 
-# Loading matrix
+# Load Loading matrix
 home2    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata/loading.csv"
 loading  <- read.csv(home2)
 # Get communities from loading matrix
@@ -34,6 +34,8 @@ vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
   "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal",
   "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss",
   "Loss of Insight")
+labs <- paste0("X", seq(LOI))
+symptoms <- paste(seq(LOI), vars)
 
 rm(home1, home2, loading)
 
@@ -58,17 +60,17 @@ f1 <- function(subtype) {
     level = rep(1, ncol(subtype)),
     lambdaSel = "CV",
     ruleReg = "OR"
-    )
+  )
   pred   <- predict(fit, data = subtype, errorCon = "R2")
   result <- pred$error$R2
-  names(result) <- paste(seq(LOI), vars)
-
+  names(result) <- symptoms
+  
   # Output in descending order according to centrality
   cat("\n\n\n", substitute(subtype), ":", "\n")
   print(result[order(result, decreasing = TRUE)])
   # Average node predictability
   cat("\n", substitute(subtype), "average node predictability:", round(mean(result), 2), "\n")
-
+  
   return(result)
 }
 
@@ -82,7 +84,7 @@ f2 <- function(net, title, pred) {
   network <- qgraph(net, title = title, pie = pred, layout = L,
     title.cex = 2.5, maximum = Max, theme = "Hollywood",
     pieColor = "#FC8D62", border.width = 2, vsize = 9, label.cex = 1,
-    groups = group, color = colors, labels = paste0("X", seq(LOI))
+    groups = group, color = colors, labels = labs
   )
   return(network)
 }
@@ -119,7 +121,7 @@ f3 <- function(Standardized) {
   c2$graph  <- "graph 2"
   # Combine node centrality of two networks
   cc        <- rbind(c1, c2)
-  cc$node   <- factor(cc$node, levels = paste0("X", 1:17))
+  cc$node   <- factor(cc$node, levels = labs)
   cc$graph  <- factor(cc$graph, labels = c("LOI", "SAI"))
   # plot node centrality
   p <- ggplot(cc, aes(node, value, group = graph, color = graph)) +
@@ -163,8 +165,8 @@ f4 <- function(centrality) {
   x1   <- centra_list[[var1]]$value
   var2 <- paste0("SAI_", centrality)
   x2   <- centra_list[[var2]]$value
-
-  # Comupute perason corelation between two networks (NA is ignored)
+  
+  # Compute perason correlation between two networks (NA is ignored)
   cors <- cor(x1, x2, use = "pairwise.complete.obs") %>%
     round(2)
   cat("Correlation coefficient -", centrality, ":", cors, "\n")
@@ -181,13 +183,13 @@ f5 <- function(subtype) {
     centra_list[[subtype_centralities[2]]]$rank +
     centra_list[[subtype_centralities[3]]]$rank +
     centra_list[[subtype_centralities[4]]]$rank
-
+  
   result         <- round(result / length(centralities), 1)
   names(result)  <- vars
   # Sorting results
   ordered_result <- result[order(result, decreasing = TRUE)]
   result_list    <- list("Origin" = result, "Ordered" = ordered_result)
-
+  
   return(result_list)
 }
 f5("LOI")
@@ -195,12 +197,14 @@ f5("SAI")
 
 # Network Comparison -----------------------------------------------------------
 # 1 for LOI, 2 for SAI
+node_centrality <- c("closeness", "betweenness", "strength", "expectedInfluence")
+
 q1 <- estimateNetwork(LOI, "EBICglasso", corMethod = "cor_auto")
 q2 <- estimateNetwork(SAI, "EBICglasso", corMethod = "cor_auto")
 
 # NCT with 10000 iterations
-nct <- NCT(q1, q2, it = 1000, progressbar = TRUE, test.edges = TRUE, test.centrality = TRUE,
-  centrality = c("closeness", "betweenness", "strength", "expectedInfluence"))
+nct <- NCT(q1, q2, it = 1000, progressbar = TRUE, test.edges = TRUE, 
+  test.centrality = TRUE, centrality = node_centrality)
 summary(nct)
 
 # p-value of edge differences
@@ -219,13 +223,11 @@ plot(nct, what = "strength")
 # 1 for LOI; 2 for SAI
 kboot1a <- bootnet(q1, nBoots = 1000, nCores = 16)
 kboot1b <- bootnet(q1, nBoots = 1000, nCores = 16, type = "case",
-  statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
-  )
+  statistics = node_centrality)
 
 kboot2a <- bootnet(q2, nBoots = 1000, nCores = 16)
 kboot2b <- bootnet(q2, nBoots = 1000, nCores = 16, type = "case",
-  statistics = c("strength", "closeness", "betweenness", "expectedInfluence")
-  )
+  statistics = node_centrality)
 
 # Plot edge weight CI; Figure S7
 f6 <- function(data, xlab) {
