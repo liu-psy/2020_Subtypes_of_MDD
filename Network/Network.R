@@ -20,9 +20,12 @@ patient  <- read.xlsx2(home1, 1, stringsAsFactors = FALSE, check.names = FALSE,
 # Load Loading matrix
 home2    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata/loading.csv"
 loading  <- read.csv(home2)
+
 # Get communities from loading matrix
 community <- apply(loading, 1, which.max)
 group     <- list(c(1:3, 16), c(4:6, 12), c(9:11, 13:15), c(7:8, 17))
+# Color of communities
+colors    <- brewer.pal(length(group), "Pastel1")
 
 # Extract HAMD-17 of subtypes
 LOI <- subset(patient, Level1 == 1, X1:X17)
@@ -34,7 +37,7 @@ vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
   "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal",
   "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss",
   "Loss of Insight")
-labs <- paste0("X", seq(LOI))
+labs     <- paste0("X", seq(LOI))
 symptoms <- paste(seq(LOI), vars)
 
 rm(home1, home2, loading)
@@ -79,7 +82,6 @@ predicability1 <- f1(LOI)
 predicability2 <- f1(SAI)
 
 # Plot networks; Figure 3A
-colors <- brewer.pal(4, "Pastel1")
 f2 <- function(net, title, pred) {
   network <- qgraph(net, title = title, pie = pred, layout = L,
     title.cex = 2.5, maximum = Max, theme = "Hollywood",
@@ -268,8 +270,8 @@ p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S8.pdf", width = 12, height = 10)
 
 # Centrality stability coefficient
-cs1 <- corStability(kboot1b)
-cs2 <- corStability(kboot2b)
+cs_LOI <- corStability(kboot1b)
+cs_SAI <- corStability(kboot2b)
 
 # Edge weights diff test; Figure S9
 f8 <- function(data, xlab) {
