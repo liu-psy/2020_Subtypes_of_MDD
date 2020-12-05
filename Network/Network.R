@@ -17,7 +17,7 @@ home1    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
 patient  <- read.xlsx2(home1, 1, stringsAsFactors = FALSE, check.names = FALSE,
   colClasses = rep(c("character", "numeric"), times = c(8, 29)))
 
-# Load Loading matrix
+# Load Loading matrix 
 home2    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata/loading.csv"
 loading  <- read.csv(home2)
 
@@ -28,8 +28,9 @@ group     <- list(c(1:3, 16), c(4:6, 12), c(9:11, 13:15), c(7:8, 17))
 colors    <- brewer.pal(length(group), "Pastel1")
 
 # Extract HAMD-17 of subtypes
-LOI <- subset(patient, Level1 == 1, X1:X17)
-SAI <- subset(patient, Level1 == 2, X1:X17)
+LOI    <- subset(patient, Level1 == 1, X1:X17)
+SAI    <- subset(patient, Level1 == 2, X1:X17)
+labels <- c("LOI", "SAI")
 
 # Items of HAMD-17
 vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
@@ -93,8 +94,8 @@ f2 <- function(net, title, pred) {
 
 pdf("Figure 3A.pdf", width = 14, height = 8)
 par(mfrow = c(1, 2))
-gr1 <- f2(gr1, "LOI", predicability1)
-gr2 <- f2(gr2, "SAI", predicability2)
+gr1 <- f2(gr1, labels[1], predicability1)
+gr2 <- f2(gr2, labels[2], predicability2)
 dev.off()
 
 # Estimate and plot node centrality --------------------------------------------
@@ -156,16 +157,16 @@ centra_list  <- centra %>%
   group_split()
 # Add labels of each list
 names(centra_list) <- paste0(
-  rep(c("LOI", "SAI"), each = 4),
+  rep(labels, each = 4),
   "_",
   rep(centralities, times = 2)
 )
 centra_list
 
 f4 <- function(centrality) {
-  var1 <- paste0("LOI_", centrality)
+  var1 <- paste0(labels[1], "_",centrality)
   x1   <- centra_list[[var1]]$value
-  var2 <- paste0("SAI_", centrality)
+  var2 <- paste0(labels[2], "_",centrality)
   x2   <- centra_list[[var2]]$value
   
   # Compute perason correlation between two networks (NA is ignored)
@@ -194,8 +195,8 @@ f5 <- function(subtype) {
   
   return(result_list)
 }
-f5("LOI")
-f5("SAI")
+f5(labels[1])
+f5(labels[2])
 
 # Network Comparison -----------------------------------------------------------
 # 1 for LOI, 2 for SAI
@@ -237,8 +238,8 @@ f6 <- function(data, xlab) {
     labs(x = xlab) +
     theme(axis.title.x = element_text(face = "bold", size = 15))
 }
-p1 <- f6(kboot1a, "LOI")
-p2 <- f6(kboot2a, "SAI")
+p1 <- f6(kboot1a, labels[1])
+p2 <- f6(kboot2a, labels[2])
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S7.pdf", width = 10, height = 12)
@@ -263,8 +264,8 @@ f7 <- function(data, xlab) {
     geom_point(size = 2) +
     themes
 }
-p1 <- f7(kboot1b, "Sampled People (LOI)")
-p2 <- f7(kboot2b, "Sampled People (SAI)")
+p1 <- f7(kboot1b, paste0("Sampled People (", labels[1], ")"))
+p2 <- f7(kboot2b, paste0("Sampled People (", labels[2], ")"))
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S8.pdf", width = 12, height = 10)
@@ -280,8 +281,8 @@ f8 <- function(data, xlab) {
     labs(x = xlab) +
     theme(axis.title.x = element_text(face = "bold", size = 15))
 }
-p1 <- f8(kboot1a, "LOI")
-p2 <- f8(kboot2a, "SAI")
+p1 <- f8(kboot1a, labels[1])
+p2 <- f8(kboot2a, labels[2])
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S9.pdf", width = 8, height = 12)
@@ -292,8 +293,8 @@ f9 <- function(data, xlab) {
     labs(x = xlab) +
     theme(axis.title.x = element_text(face = "bold", size = 15))
 }
-p1 <- f9(kboot1a, "LOI")
-p2 <- f9(kboot2a, "SAI")
+p1 <- f9(kboot1a, labels[1])
+p2 <- f9(kboot2a, labels[2])
 
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S10.pdf", width = 8, height = 12)
