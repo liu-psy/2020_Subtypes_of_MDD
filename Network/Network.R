@@ -1,21 +1,28 @@
 # This script was used to network analysis
-library(bootnet)
 library(dplyr)
 library(ggplot2)
-library(mgm)
-library(NetworkComparisonTest)
-library(patchwork)
-library(qgraph)
-library(RColorBrewer)
 library(reshape2)
-library(xlsx)
+library(patchwork)
+library(RColorBrewer)
 
+library(mgm)                   # Mixed graphical models
+library(qgraph)
+library(bootnet)               # Network stability
+library(networktools)          # Bridge centrality
+library(NetworkComparisonTest) # NCT
 
+# Set working directory
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Network")
+
 # Load Data --------------------------------------------------------------------
 home1    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
-patient  <- read.xlsx2(home1, 1, stringsAsFactors = FALSE, check.names = FALSE,
-  colClasses = rep(c("character", "numeric"), times = c(8, 29)))
+patient  <- read.xlsx2(
+  home1, 
+  sheetIndex       = 1, 
+  stringsAsFactors = FALSE, 
+  check.names      = FALSE,
+  colClasses       = rep(c("character", "numeric"), times = c(8, 29))
+)
 
 # Load Loading matrix 
 home2    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata/loading.csv"
@@ -33,11 +40,25 @@ SAI    <- subset(patient, Level1 == 2, X1:X17)
 labels <- c("LOI", "SAI")
 
 # Items of HAMD-17
-vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
-  "Middle Insomnia", "Late Insomnia", "Work Interests", "Retardation",
-  "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal",
-  "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss",
-  "Loss of Insight")
+vars <- c(
+  "Depressed Mood", 
+  "Guilt", 
+  "Suicide", 
+  "Early Insomnia",
+  "Middle Insomnia", 
+  "Late Insomnia", 
+  "Work Interests", 
+  "Retardation",
+  "Agitation", 
+  "Psychic Anxiety", 
+  "Somatic Anxiety", 
+  "Gastrointestinal",
+  "General Somatic", 
+  "Loss of Libido", 
+  "Hypochondriasis", 
+  "Weight Loss",
+  "Loss of Insight"
+)
 labs     <- paste0("X", seq(LOI))
 symptoms <- paste(seq(LOI), vars)
 
@@ -51,8 +72,8 @@ gr1 <- LOI %>% cor_auto() %>% EBICglasso(n = nrow(LOI))
 gr2 <- SAI %>% cor_auto() %>% EBICglasso(n = nrow(SAI))
 
 # Layout of networks
-Max <- max(c(gr1, gr2))
-L   <- averageLayout(gr1, gr2)
+max <- max(c(gr1, gr2))
+l   <- averageLayout(gr1, gr2)
 
 # Predicability Networks -------------------------------------------------------
 set.seed(1)
@@ -60,10 +81,10 @@ f1 <- function(subtype) {
   # Mixed Graphical Models
   fit    <- mgm(
     subtype,
-    type = rep("g", ncol(subtype)),
-    level = rep(1, ncol(subtype)),
+    type      = rep("g", ncol(subtype)),
+    level     = rep(1, ncol(subtype)),
     lambdaSel = "CV",
-    ruleReg = "OR"
+    ruleReg   = "OR"
   )
   pred   <- predict(fit, data = subtype, errorCon = "R2")
   result <- pred$error$R2
@@ -84,10 +105,21 @@ predicability2 <- f1(SAI)
 
 # Plot networks; Figure 3A
 f2 <- function(net, title, pred) {
-  network <- qgraph(net, title = title, pie = pred, layout = L,
-    title.cex = 2.5, maximum = Max, theme = "Hollywood",
-    pieColor = "#FC8D62", border.width = 2, vsize = 9, label.cex = 1,
-    groups = group, color = colors, labels = labs
+  network <- qgraph(
+    net, 
+    title        = title, 
+    pie          = pred, 
+    layout       = l,
+    title.cex    = 2.5, 
+    maximum      = max, 
+    theme        = "Hollywood",
+    pieColor     = "#FC8D62", 
+    border.width = 2, 
+    vsize        = 9, 
+    label.cex    = 1,
+    groups       = group, 
+    color        = colors, 
+    labels       = labs
   )
   return(network)
 }
@@ -99,24 +131,6 @@ gr2 <- f2(gr2, labels[2], predicability2)
 dev.off()
 
 # Estimate and plot node centrality --------------------------------------------
-# plot themes
-themes <- theme(
-  legend.title       = element_blank(),
-  legend.position    = c(0.95, 0.95),
-  legend.text        = element_text(size = 15, face = "bold"),
-  panel.grid.minor   = element_blank(),
-  axis.text.x        = element_text(size = 12),
-  axis.title.x       = element_blank(),
-  axis.text.y        = element_text(face = "bold", size = 12),
-  axis.title.y       = element_blank(),
-  strip.text         = element_text(size = 15),
-  strip.background   = element_blank(),
-  strip.placement    = "outside",
-  axis.line          = element_line(color = "black", size = 1, linetype = "solid"),
-  panel.background   = element_rect(fill = "white"),
-  panel.grid.major.y = element_line(color = "black", size = 0.5)
-)
-
 f3 <- function(Standardized) {
   # Get node centrality (Betweenness, Closeness, ExpectedInfluence, Strength)
   c1        <- centralityTable(gr1, standardized = Standardized)
@@ -132,7 +146,22 @@ f3 <- function(Standardized) {
     geom_point(size = 3) +
     facet_wrap(~measure, strip.position = "bottom", scales = "free") +
     scale_color_manual(values = c("#E41A1C", "#377EB8")) +
-    themes
+    theme(
+      legend.title       = element_blank(),
+      legend.position    = c(0.95, 0.95),
+      legend.text        = element_text(size = 15, face = "bold"),
+      panel.grid.minor   = element_blank(),
+      axis.text.x        = element_text(size = 12),
+      axis.title.x       = element_blank(),
+      axis.text.y        = element_text(face = "bold", size = 12),
+      axis.title.y       = element_blank(),
+      strip.text         = element_text(size = 15),
+      strip.background   = element_blank(),
+      strip.placement    = "outside",
+      axis.line          = element_line(color = "black", size = 1, linetype = "solid"),
+      panel.background   = element_rect(fill = "white"),
+      panel.grid.major.y = element_line(color = "black", size = 0.5)
+    )
   print(p)
   return(cc)
 }
@@ -147,7 +176,7 @@ ggsave("Figure S6.pdf", width = 14, height = 8)
 
 # Correlation of the centrality between subtypes -------------------------------
 centralities <- c("Betweenness", "Closeness", "ExpectedInfluence", "Strength")
-centra$node  <- rep(vars, times = 8)
+centra$node  <- rep(vars, times = length(centralities) * 2)
 
 centra_list  <- centra %>%
   select(-type) %>%
@@ -157,22 +186,21 @@ centra_list  <- centra %>%
   group_split()
 # Add labels of each list
 names(centra_list) <- paste0(
-  rep(labels, each = 4),
+  rep(labels, each = length(centralities)),
   "_",
   rep(centralities, times = 2)
 )
 centra_list
 
 f4 <- function(centrality) {
-  var1 <- paste0(labels[1], "_",centrality)
+  var1 <- paste0(labels[1], "_", centrality)
   x1   <- centra_list[[var1]]$value
-  var2 <- paste0(labels[2], "_",centrality)
+  var2 <- paste0(labels[2], "_", centrality)
   x2   <- centra_list[[var2]]$value
   
   # Compute perason correlation between two networks (NA is ignored)
-  cors <- cor(x1, x2, use = "pairwise.complete.obs") %>%
-    round(2)
-  cat("Correlation coefficient -", centrality, ":", cors, "\n")
+  cors <- cor(x1, x2, use = "pairwise.complete.obs") %>% round(2)
+  return(cat("Correlation coefficient -", centrality, ":", cors, "\n"))
 }
 f4("Betweenness")
 f4("Closeness")
@@ -244,25 +272,22 @@ p2 <- f6(kboot2a, labels[2])
 p1 + p2 + plot_layout(ncol = 1)
 ggsave("Figure S7.pdf", width = 10, height = 12)
 
-# Plot themes
-themes <- theme(
-  panel.grid.minor   = element_blank(),
-  axis.text.x        = element_text(size = 12),
-  axis.title.x       = element_text(face = "bold", size = 15),
-  axis.title.y       = element_text(face = "bold", size = 15),
-  axis.text.y        = element_text(face = "bold", size = 12),
-  axis.line          = element_line(color = "black", size = 1, linetype = "solid"),
-  panel.background   = element_rect(fill = "white"),
-  panel.grid.major.y = element_line(color = "black", size = 0.5)
-)
-
 # Plot centrality stability; Figure S8
 f7 <- function(data, xlab) {
   plot(data, statistics = "all") +
     labs(x = xlab) +
     geom_line(size = 1.5) +
     geom_point(size = 2) +
-    themes
+    theme(
+      panel.grid.minor   = element_blank(),
+      axis.text.x        = element_text(size = 12),
+      axis.title.x       = element_text(face = "bold", size = 15),
+      axis.title.y       = element_text(face = "bold", size = 15),
+      axis.text.y        = element_text(face = "bold", size = 12),
+      axis.line          = element_line(color = "black", size = 1, linetype = "solid"),
+      panel.background   = element_rect(fill = "white"),
+      panel.grid.major.y = element_line(color = "black", size = 0.5)
+    )
 }
 p1 <- f7(kboot1b, paste0("Sampled People (", labels[1], ")"))
 p2 <- f7(kboot2b, paste0("Sampled People (", labels[2], ")"))
