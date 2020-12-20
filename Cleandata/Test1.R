@@ -17,11 +17,25 @@ patient$Gender <- factor(patient$Gender, levels = c(1, 2), labels = c("Male", "F
 patient$Sites  <- factor(patient$Sites, levels = 1:15)
 
 # Items of HAMD-17
-hamd_vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
-  "Middle Insomnia", "Late Insomnia", "Work Interests", "Retardation",
-  "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal",
-  "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss",
-  "Loss of Insight")
+hamd_vars <- c(
+  "Depressed Mood",
+  "Guilt",
+  "Suicide",
+  "Early Insomnia",
+  "Middle Insomnia",
+  "Late Insomnia",
+  "Work Interests",
+  "Retardation",
+  "Agitation",
+  "Psychic Anxiety",
+  "Somatic Anxiety",
+  "Gastrointestinal",
+  "General Somatic",
+  "Loss of Libido",
+  "Hypochondriasis",
+  "Weight Loss",
+  "Loss of Insight"
+)
 names(patient)[11:27] <- paste(1:17, hamd_vars)
 
 rm(home)
@@ -46,7 +60,7 @@ patient %>%
 lapply(c("Age", "Education", "HAMD"), function(x) describe(patient[[x]]))
 
 # Gender test ------------------------------------------------------------------
-Male <- patient[patient$Gender == "Male", ]
+Male   <- patient[patient$Gender == "Male", ]
 Female <- patient[patient$Gender == "Female", ]
 
 # Gender Distribution
@@ -60,9 +74,14 @@ m_ttest <- function(data1, data2, x) {
   for (i in seq(x)) {
     t <- t.test(data1[[x[i]]], data2[[x[i]]])
     d <- cohen.d(data1[[x[i]]], data2[[x[i]]])
-    results[i, 1:6] <- c(abs(round(t$statistic, 2)), abs(round(t$parameter)),
-      abs(round(t$p.value, 3)), round(t$conf.int[1], 2),
-      round(t$conf.int[2], 2), abs(round(d$estimate, 3)))
+    results[i, 1:6] <- c(
+      abs(round(t$statistic, 2)),
+      abs(round(t$parameter)),
+      abs(round(t$p.value, 3)),
+      round(t$conf.int[1], 2),
+      round(t$conf.int[2], 2),
+      abs(round(d$estimate, 3))
+      )
   }
   # fdr correction for p-vaules
   results[, 7] <- round(p.adjust(results[, 3], method = "fdr"), 3)

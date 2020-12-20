@@ -17,14 +17,14 @@ setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Network")
 # Load Data --------------------------------------------------------------------
 home1    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC/HHC.xlsx"
 patient  <- read.xlsx2(
-  home1, 
-  sheetIndex       = 1, 
-  stringsAsFactors = FALSE, 
+  home1,
+  sheetIndex       = 1,
+  stringsAsFactors = FALSE,
   check.names      = FALSE,
   colClasses       = rep(c("character", "numeric"), times = c(8, 29))
 )
 
-# Load Loading matrix 
+# Load Loading matrix
 home2    <- "E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata/loading.csv"
 loading  <- read.csv(home2)
 
@@ -41,21 +41,21 @@ labels <- c("LOI", "SAI")
 
 # Items of HAMD-17
 vars <- c(
-  "Depressed Mood", 
-  "Guilt", 
-  "Suicide", 
+  "Depressed Mood",
+  "Guilt",
+  "Suicide",
   "Early Insomnia",
-  "Middle Insomnia", 
-  "Late Insomnia", 
-  "Work Interests", 
+  "Middle Insomnia",
+  "Late Insomnia",
+  "Work Interests",
   "Retardation",
-  "Agitation", 
-  "Psychic Anxiety", 
-  "Somatic Anxiety", 
+  "Agitation",
+  "Psychic Anxiety",
+  "Somatic Anxiety",
   "Gastrointestinal",
-  "General Somatic", 
-  "Loss of Libido", 
-  "Hypochondriasis", 
+  "General Somatic",
+  "Loss of Libido",
+  "Hypochondriasis",
   "Weight Loss",
   "Loss of Insight"
 )
@@ -89,13 +89,13 @@ f1 <- function(subtype) {
   pred   <- predict(fit, data = subtype, errorCon = "R2")
   result <- pred$error$R2
   names(result) <- symptoms
-  
+
   # Output in descending order according to centrality
   cat("\n\n\n", substitute(subtype), ":", "\n")
   print(result[order(result, decreasing = TRUE)])
   # Average node predictability
   cat("\n", substitute(subtype), "average node predictability:", round(mean(result), 2), "\n")
-  
+
   return(result)
 }
 
@@ -106,19 +106,19 @@ predicability2 <- f1(SAI)
 # Plot networks; Figure 3A
 f2 <- function(net, title, pred) {
   network <- qgraph(
-    net, 
-    title        = title, 
-    pie          = pred, 
+    net,
+    title        = title,
+    pie          = pred,
     layout       = l,
-    title.cex    = 2.5, 
-    maximum      = max, 
+    title.cex    = 2.5,
+    maximum      = max,
     theme        = "Hollywood",
-    pieColor     = "#FC8D62", 
-    border.width = 2, 
-    vsize        = 9, 
+    pieColor     = "#FC8D62",
+    border.width = 2,
+    vsize        = 9,
     label.cex    = 1,
-    groups       = group, 
-    color        = colors, 
+    groups       = group,
+    color        = colors,
     labels       = labs
   )
   return(network)
@@ -197,7 +197,7 @@ f4 <- function(centrality) {
   x1   <- centra_list[[var1]]$value
   var2 <- paste0(labels[2], "_", centrality)
   x2   <- centra_list[[var2]]$value
-  
+
   # Compute perason correlation between two networks (NA is ignored)
   cors <- cor(x1, x2, use = "pairwise.complete.obs") %>% round(2)
   return(cat("Correlation coefficient -", centrality, ":", cors, "\n"))
@@ -214,13 +214,13 @@ f5 <- function(subtype) {
     centra_list[[subtype_centralities[2]]]$rank +
     centra_list[[subtype_centralities[3]]]$rank +
     centra_list[[subtype_centralities[4]]]$rank
-  
+
   result         <- round(result / length(centralities), 1)
   names(result)  <- vars
   # Sorting results
   ordered_result <- result[order(result, decreasing = TRUE)]
   result_list    <- list("Origin" = result, "Ordered" = ordered_result)
-  
+
   return(result_list)
 }
 f5(labels[1])
@@ -234,7 +234,7 @@ q1 <- estimateNetwork(LOI, "EBICglasso", corMethod = "cor_auto")
 q2 <- estimateNetwork(SAI, "EBICglasso", corMethod = "cor_auto")
 
 # NCT with 10000 iterations
-nct <- NCT(q1, q2, it = 1000, progressbar = TRUE, test.edges = TRUE, 
+nct <- NCT(q1, q2, it = 1000, progressbar = TRUE, test.edges = TRUE,
   test.centrality = TRUE, centrality = node_centrality)
 summary(nct)
 

@@ -10,18 +10,37 @@ setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC")
 
 # Load data --------------------------------------------------------------------
 home <- "HHC.xlsx"
-patient <- read.xlsx2(home, 1,  stringsAsFactors = FALSE,
-  colClasses = rep(c("character", "numeric"), times = c(8, 29)))
+patient <- read.xlsx2(
+  home,
+  sheetIndex       = 1,
+  stringsAsFactors = FALSE,
+  colClasses       = rep(c("character", "numeric"), times = c(8, 29))
+)
 
 # Set character to factor
 patient[, c(2, 3, 7:8)][] <- lapply(patient[, c(2, 3, 7:8)], factor)
 
 # Modify variable names --------------------------------------------------------
 # HAMD-17
-vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",  "Middle Insomnia",
-  "Late Insomnia", "Work Interests", "Retardation", "Agitation", "Psychic Anxiety",
-  "Somatic Anxiety", "Gastrointestinal", "General Somatic", "Loss of Libido",
-  "Hypochondriasis", "Weight Loss", "Loss of Insight")
+vars <- c(
+  "Depressed Mood",
+  "Guilt",
+  "Suicide",
+  "Early Insomnia",
+  "Middle Insomnia",
+  "Late Insomnia",
+  "Work Interests",
+  "Retardation",
+  "Agitation",
+  "Psychic Anxiety",
+  "Somatic Anxiety",
+  "Gastrointestinal",
+  "General Somatic",
+  "Loss of Libido",
+  "Hypochondriasis",
+  "Weight Loss",
+  "Loss of Insight"
+)
 names(patient)[13:29] <- paste(1:17, vars)
 # PCA
 pca_vars <- names(patient)[31:34]
@@ -48,8 +67,8 @@ lapply(list(table1, table2[c(1,4), ], table2[c(2,3), ]), cramer)
 
 # Multiply t-tests -------------------------------------------------------------
 mtest <- function(Level, cluster1, cluster2, x) {
-  group1 <- patient[patient[[Level]] %in% cluster1, ]
-  group2 <- patient[patient[[Level]] %in% cluster2, ]
+  group1  <- patient[patient[[Level]] %in% cluster1, ]
+  group2  <- patient[patient[[Level]] %in% cluster2, ]
   results <- matrix(nrow = length(x), ncol = 7)
   colnames(results) <- c("Stat", "df", "P", "Lower", "Upper", "d", "P(corrected)")
   rownames(results) <- x
@@ -57,13 +76,18 @@ mtest <- function(Level, cluster1, cluster2, x) {
   for (i in seq(x)) {
     t <- t.test(group1[[x[i]]], group2[[x[i]]])
     d <- cohen.d(group1[[x[i]]], group2[[x[i]]])
-    results[i, 1:6] <- c(round(t$statistic, 1), abs(round(t$parameter)),
-      abs(round(t$p.value, 3)), round(t$conf.int[1], 2),
-      round(t$conf.int[2], 2), abs(round(d$estimate, 2)))
+    results[i, 1:6] <- c(
+      round(t$statistic, 1),
+      abs(round(t$parameter)),
+      abs(round(t$p.value, 3)),
+      round(t$conf.int[1], 2),
+      round(t$conf.int[2], 2),
+      abs(round(d$estimate, 2))
+    )
   }
-  # fdr correction for p-vaules
+  # fdr correction for p-values
   results[, 7] <- round(p.adjust(results[, 3], method = "fdr"), 3)
-  results <- results[, c(1:3,7,4,5,6)]
+  results      <- results[, c(1:3, 7, 4, 5, 6)]
   return(results)
 }
 

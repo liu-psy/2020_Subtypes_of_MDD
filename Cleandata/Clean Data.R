@@ -15,16 +15,22 @@ home1 <- "Depression.xlsx"
 home2 <- "SWU_Data.xlsx"
 
 # Data of REST-meta-MDD
-patient_rest_project <- read.xlsx2(home1, sheetIndex = 1, stringsAsFactors = FALSE,
-  colClasses = c(rep("character", 2), rep("numeric", 2), rep("character", 2),
-  rep("numeric", 27)))
+patient_rest_project <- read.xlsx2(
+  home1,
+  sheetIndex       = 1,
+  stringsAsFactors = FALSE,
+  colClasses       = c(rep("character", 2), rep("numeric", 2), rep("character", 2), rep("numeric", 27))
+)
 # Exclude irrelevant variables
 patient_rest_project <- subset(patient_rest_project, select = -c(HAMD, HAMA, X18:X24))
 
 # Data of SWU
-patient_swu <- read.xlsx2(home2, sheetIndex = 1, stringsAsFactors = FALSE,
-  colClasses = c(rep("character", 2), rep("numeric", 2), "character", "numeric",
-  "character", rep("numeric", 17)))
+patient_swu <- read.xlsx2(
+  home2,
+  sheetIndex       = 1,
+  stringsAsFactors = FALSE,
+  colClasses       = c(rep("character", 2), rep("numeric", 2), "character", "numeric", "character", rep("numeric", 17))
+)
 
 # Combine Datasets -------------------------------------------------------------
 # Patients without HAMD-17 were excluded
@@ -108,7 +114,7 @@ rm(site_list, sites, get_sites)
 # Add head motion of fMRI data path of every patient
 headmotion <- function(type) {
   home <- "F:/MDD/RealignParameter/"
-  id <- patient$ID
+  id   <- patient$ID
   path <- paste0(home, id)
   list <- vector("list", length = nrow(patient))
   for (i in seq(list)) {
@@ -122,9 +128,9 @@ patient <- headmotion("FD_Jenkinson_")
 
 # Add fMRI file dir, Weighted DC
 add_dir <- function(type) {
-  home <- "F:/MDD/DegreeCentrality_FunImgARCWF/"
-  filename <- paste0("DegreeCentrality_Positive", type, "SumBrainMap_")
-  dir <- paste0(home, "f", filename, patient$ID, ".nii")
+  home        <- "F:/MDD/DegreeCentrality_FunImgARCWF/"
+  filename    <- paste0("DegreeCentrality_Positive", type, "SumBrainMap_")
+  dir         <- paste0(home, "f", filename, patient$ID, ".nii")
   patient$Dir <- dir
   return(patient)
 }
@@ -146,8 +152,14 @@ dev.off()
 
 # PCA for reducing demensions --------------------------------------------------
 # Parallel analysis
-PA <- fa.parallel(hamd, fa = "pc", sim = FALSE, n.iter = 10000, quant = 0.95,
-  main = "Parallel Analysis")
+PA <- fa.parallel(
+  hamd,
+  fa = "pc",
+  sim = FALSE,
+  n.iter = 10000,
+  quant = 0.95,
+  main = "Parallel Analysis"
+)
 # 4 components come from parallel analysis
 PA$ncomp
 
@@ -192,11 +204,25 @@ PCA$loadings
 PCA$r.scores
 describe(PCA$communality)
 
-vars <- c("Depressed Mood", "Guilt", "Suicide", "Early Insomnia",
-  "Middle Insomnia",  "Late Insomnia", "Work Interests", "Retardation",
-  "Agitation", "Psychic Anxiety", "Somatic Anxiety", "Gastrointestinal",
-  "General Somatic", "Loss of Libido", "Hypochondriasis", "Weight Loss",
-  "Loss of Insight")
+vars <- c(
+  "Depressed Mood",
+  "Guilt",
+  "Suicide",
+  "Early Insomnia",
+  "Middle Insomnia",
+  "Late Insomnia",
+  "Work Interests",
+  "Retardation",
+  "Agitation",
+  "Psychic Anxiety",
+  "Somatic Anxiety",
+  "Gastrointestinal",
+  "General Somatic",
+  "Loss of Libido",
+  "Hypochondriasis",
+  "Weight Loss",
+  "Loss of Insight"
+)
 components <- c("Guilt", "Insomnia", "Somatic and Anxiety", "Interests Loss")
 
 # Modify components position
@@ -206,9 +232,9 @@ write.csv(loading_matrix, "Loading.csv", row.names = FALSE)
 
 # Plot loading matrix, Figure 1
 # This code is inspired by https://rpubs.com/danmirman/plotting_factor_analysis
-loading <- as.data.frame(loading_matrix)
-loading$vars <- vars %>% factor(levels = rev(vars))
-loading <- melt(loading, id = "vars")
+loading          <- as.data.frame(loading_matrix)
+loading$vars     <- vars %>% factor(levels = rev(vars))
+loading          <- melt(loading, id = "vars")
 loading$variable <- factor(loading$variable)
 
 ggplot(loading, aes(vars, value, fill = value)) +
@@ -216,8 +242,7 @@ ggplot(loading, aes(vars, value, fill = value)) +
   facet_wrap(~ variable, nrow = 1) +
   labs(x = NULL, y = "Loading Strength") +
   coord_flip() +
-  scale_fill_gradient2(high = "red", mid = "white", low = "blue", midpoint = 0,
-    guide = FALSE) +
+  scale_fill_gradient2(high = "red", mid = "white", low = "blue", midpoint = 0, guide = FALSE) +
   theme(
     title            = element_text(size = 20),
     text             = element_text(size = 20),

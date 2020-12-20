@@ -10,11 +10,15 @@ setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
 
 # Loading Data -----------------------------------------------------------------
 home <- "Data.xlsx"
-patient <- read.xlsx2(home, sheetIndex = 1, stringsAsFactors = FALSE,
-  colClasses = c(rep("character", 6), rep("numeric", 29)))
+patient <- read.xlsx2(
+  home,
+  sheetIndex       = 1,
+  stringsAsFactors = FALSE,
+  colClasses       = c(rep("character", 6), rep("numeric", 29))
+)
 
 patient$Gender <- factor(patient$Gender, labels = c("Male", "Female"))
-patient$Sites <- factor(patient$Sites, levels = 1:15)
+patient$Sites  <- factor(patient$Sites, levels = 1:15)
 
 rm(home)
 
