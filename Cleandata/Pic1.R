@@ -1,26 +1,22 @@
 # This script is used to plot site information
-library(dplyr)
-library(ggplot2)
+library(xlsx)
+library(tidyverse)
 library(patchwork)
 library(RColorBrewer)
-library(xlsx)
+
 
 # Set working directory
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/Cleandata")
 
 # Loading Data -----------------------------------------------------------------
-home <- "Data.xlsx"
 patient <- read.xlsx2(
-  home,
+  "Data.xlsx",
   sheetIndex       = 1,
   stringsAsFactors = FALSE,
   colClasses       = c(rep("character", 6), rep("numeric", 29))
 )
-
 patient$Gender <- factor(patient$Gender, labels = c("Male", "Female"))
 patient$Sites  <- factor(patient$Sites, levels = 1:15)
-
-rm(home)
 
 ## Site information -------------------------------------------------------------
 # plot theme -------------------------------------------------------------------
@@ -35,7 +31,10 @@ themes <- theme(
   )
 
 # Sample distribution per site and Gender distribution per site; Figure S2
-table1 <- patient %>% select(Sites) %>% group_by(Sites) %>% summarise(Count = n())
+table1 <- patient %>%
+  select(Sites) %>%
+  group_by(Sites) %>%
+  summarise(Count = n())
 
 p1 <- ggplot(table1, aes(Sites, Count, fill = Sites)) +
   geom_bar(stat = "identity", show.legend = FALSE, width = 0.55) +
@@ -44,7 +43,6 @@ p1 <- ggplot(table1, aes(Sites, Count, fill = Sites)) +
   geom_text(label = table1$Count, vjust = 00, alpha = 0.5, size = 8) +
   scale_fill_manual(values = c(brewer.pal(11, "Set3"), brewer.pal(4, "Set2"))) +
   themes
-
 p2 <- ggplot(patient, aes(Sites, fill = Gender)) +
   geom_bar(stat = "count", width = 0.7, alpha = 0.8) +
   labs(y = "") +

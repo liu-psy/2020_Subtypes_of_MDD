@@ -1,6 +1,7 @@
 # This script is used to compare the behavior of subtypes
 library(xlsx)
 library(dplyr)
+
 library(sjstats)     # Cramer's V
 library(effsize)     # Cohen's d
 
@@ -9,9 +10,8 @@ library(effsize)     # Cohen's d
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC")
 
 # Load data --------------------------------------------------------------------
-home <- "HHC.xlsx"
 patient <- read.xlsx2(
-  home,
+  "HHC.xlsx",
   sheetIndex       = 1,
   stringsAsFactors = FALSE,
   colClasses       = rep(c("character", "numeric"), times = c(8, 29))
@@ -49,8 +49,6 @@ sub_vars <- names(patient)[35:37]
 # symptoms
 sym_vars <- names(patient)[13:29]
 
-rm(home, vars)
-
 # Check subgroups --------------------------------------------------------------
 # 1vs2 in level1
 with(patient, ftable(Level1))
@@ -70,7 +68,8 @@ mtest <- function(Level, cluster1, cluster2, x) {
   group1  <- patient[patient[[Level]] %in% cluster1, ]
   group2  <- patient[patient[[Level]] %in% cluster2, ]
   results <- matrix(nrow = length(x), ncol = 7)
-  colnames(results) <- c("Stat", "df", "P", "Lower", "Upper", "d", "P(corrected)")
+  labs    <- c("Stat", "df", "P", "Lower", "Upper", "d", "P(corrected)")
+  colnames(results) <- labs
   rownames(results) <- x
 
   for (i in seq(x)) {

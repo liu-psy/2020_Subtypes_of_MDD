@@ -14,7 +14,7 @@ patient <- read.xlsx2(
   sheetIndex       = 1,
   stringsAsFactors = FALSE,
   check.names      = FALSE,
-  colClasses       =rep(c("character", "numeric"), times = c(8, 29))
+  colClasses       = rep(c("character", "numeric"), times = c(8, 29))
 )
 ROIs <- matrix(nrow = nrow(patient), ncol = 17)
 colnames(ROIs) <- paste0("ROI", seq(ncol(ROIs)))
@@ -44,8 +44,10 @@ names(ROIs_vars)[21] <- "IL"
 reg <- function(data) {
   reg_results <- data.frame()
   for (i in 1:17) {
-    reg <- lm(data[, i] ~ Guilt + Insomnia + SA + IL + Age + Gender + Education + Sites + HeadMotion,
-      data = data)
+    reg <- lm(
+      data[, i] ~ Guilt + Insomnia + SA + IL + Age + Gender + Education + Sites + HeadMotion,
+      data = data
+    )
     reg_result   <- summary(reg)$coefficients[2:5, 3:4]
     reg_results  <- rbind(reg_results, reg_result)
   }

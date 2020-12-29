@@ -13,9 +13,7 @@ patient <- read.xlsx2(
   check.names      = FALSE,
   colClasses       = rep(c("character", "numeric"), times = c(8, 29)),
 )
-
 patient$Sites <- factor(patient$Sites, levels = 1:15)
-rm(home)
 
 # Check subgroups --------------------------------------------------------------
 # 1 for LOI;2 for SAI
@@ -50,10 +48,19 @@ extract_covars <- extract(covariates)
 Covariates        <- vector("list", length = 3)
 names(Covariates) <- c("1_12", "2_14", "2_23")
 # Level 1
-Covariates[[1]] <- rbind(extract_covars("Level1", 1), extract_covars("Level1", 2))                            # AONVA
+Covariates[[1]] <- rbind(
+  extract_covars("Level1", 1), 
+  extract_covars("Level1", 2)
+)
 # Level 2
-Covariates[[2]] <- rbind(extract_covars("Level2", 1), extract_covars("Level2", 4))
-Covariates[[3]] <- rbind(extract_covars("Level2", 2), extract_covars("Level2", 3))
+Covariates[[2]] <- rbind(
+  extract_covars("Level2", 1), 
+  extract_covars("Level2", 4)
+)
+Covariates[[3]] <- rbind(
+  extract_covars("Level2", 2), 
+  extract_covars("Level2", 3)
+)
 
 # Fix the Site variable --------------------------------------------------------
 with(patient, ftable(Level1, Sites))
@@ -81,7 +88,7 @@ for (i in seq(Covariates)) {
   write.table(
     Covariates[[i]],
     paste0("Covariates", names(Covariates)[[i]], ".txt"),
-    quote = FALSE,
+    quote     = FALSE,
     row.names = FALSE,
     col.names = FALSE
   )
@@ -91,7 +98,7 @@ for (i in seq(Dirs)) {
   write.table(
     Dirs[[i]],
     paste0("Dirs", names(Dirs)[[i]], ".txt"),
-    quote = FALSE,
+    quote     = FALSE,
     row.names = FALSE,
     col.names = FALSE
   )

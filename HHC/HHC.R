@@ -1,6 +1,7 @@
 # This script was used to Hybrid Hierarchical Clustering and plot
 library(xlsx)
 library(dplyr)
+
 library(hybridHclust)          # Hybrid Hierarchical Clustering
 library(dynamicTreeCut)        # Dynamic Tree Cut algorithm
 library(gplots)                # Heatmap
@@ -12,8 +13,13 @@ library(clusteval)             # Robustness of clusering
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC")
 
 home <- "E:/WorkingSpace/R/Paper/Depression/Subtypes/Cleandata/Data.xlsx"
-patient <- read.xlsx2(home, 1, stringsAsFactors = FALSE, check.names = FALSE,
-  colClasses = rep(c("character", "numeric"), times = c(6, 29)))
+patient <- read.xlsx2(
+  home, 
+  sheetIndex       = 1, 
+  stringsAsFactors = FALSE, 
+  check.names      = FALSE,
+  colClasses       = rep(c("character", "numeric"), times = c(6, 29))
+)
 
 # Hybrid Hierarchnical Clustering ----------------------------------------------
 # Euclidean Distant Matrix
@@ -38,7 +44,9 @@ table(labels[, 1])
 table(labels[, 2])
 
 # Robustness of HHC ------------------------------------------------------------
+# K = 2
 labels2 <- cutree(hclust(as.dist(hamdDist), method = "average"), k = 2)
+# K = 4
 labels4 <- cutree(hclust(as.dist(hamdDist), method = "average"), k = 4)
 
 # jaccard index
@@ -65,7 +73,10 @@ text(20, 3.8e5, "k = 2", cex = 2, font = 2)
 dev.off()
 
 # Heatmap of Eculidean distant matrix; Figure 2B -------------------------------
-color <- rep(c("#92C5DE", "#4393C3", "#EF3B2C", "#FC9272"), times = c(227, 178, 116, 129))
+color <- rep(
+  c("#92C5DE", "#4393C3", "#EF3B2C", "#FC9272"), 
+  times = c(227, 178, 116, 129)
+)
 color <- color[order(HHC$order)]
 
 pdf("Heatmap.pdf", width = 15, height = 18)
@@ -109,6 +120,16 @@ heatmap.2(
 dev.off()
 
 # Output -----------------------------------------------------------------------
-patient <- data.frame(patient, Level1 = labels[, 1], Level2 = labels[, 2], check.names = FALSE) %>%
-  select(names(patient)[1:6], Level1, Level2, everything())
+patient <- data.frame(
+  patient, 
+  Level1      = labels[, 1], 
+  Level2      = labels[, 2], 
+  check.names = FALSE
+  ) %>%
+  select(
+    names(patient)[1:6], 
+    Level1, 
+    Level2, 
+    everything()
+  )
 write.xlsx2(patient, "HHC.xlsx", sheetName = "patient", row.names = FALSE)

@@ -1,20 +1,18 @@
 # This script was used for plot subtype comparisons
 library(xlsx)
+library(ggradar)      # Radar plot
 library(reshape2)
-library(dplyr)
-library(ggplot2)
-library(ggradar)        # Radar plot
-library(RColorBrewer)
+library(tidyverse)        
 library(patchwork)
+library(RColorBrewer)
 
 
 # Set working directory
 setwd("E:/WorkingSpace/Project/2020_Symptom_Subtyping_MDD/HHC")
 
 # Load data --------------------------------------------------------------------
-home <- "HHC.xlsx"
 patient <- read.xlsx2(
-  home,
+  "HHC.xlsx",
   sheetIndex       = 1,
   stringsAsFactors = FALSE,
   colClasses       = rep(c("character", "numeric"), times = c(8, 29))
@@ -44,7 +42,6 @@ hamd_vars <- c(
   "Weight\nLoss",
   "Loss of\nInsight"
 )
-rm(home)
 
 # Plot subtype comparisons -----------------------------------------------------
 # Set the parameters of radar plot
@@ -75,8 +72,13 @@ radar_plot1 <- function(data, colors, labels) {
 }
 
 pca_levels <- subset(patient, select = c(Level1:Level2, Guilt:Interests.Loss))
-pca_level1 <- pca_levels %>% select(-Level2) %>% group_by(Level1) %>% summarise_all(mean)
-pca_level2 <- pca_levels %>% group_by(Level1, Level2) %>% summarise_all(mean)
+pca_level1 <- pca_levels %>% 
+  select(-Level2) %>% 
+  group_by(Level1) %>% 
+  summarise_all(mean)
+pca_level2 <- pca_levels %>% 
+  group_by(Level1, Level2) %>% 
+  summarise_all(mean)
 
 # 1 PCA components--------------------------------------------------------------
 # level 1
@@ -103,7 +105,12 @@ radar_plot1(pca_level2[c(1,2), -1], c("#4393C3", "#92C5DE"),
 ggsave("Radar2_32_pca.pdf", width = 120, height = 80, unit = "cm")
 # LOI+ vs LOI-
 radar_plot1(pca_level2[c(3,4), -1], c("#EF3B2C", "#FC9272"),
-  labels = c("Guilt***", "Insomnia***", "Somatic and Anxiety***", "***\nInterests Loss"))
+  labels = c(
+    "Guilt***", 
+    "Insomnia***", 
+    "Somatic and Anxiety***", 
+    "***\nInterests Loss")
+)
 ggsave("Radar2_14_pca.pdf", width = 120, height = 80, unit = "cm")
 
 # Set the parameters of radar plot ---------------------------------------------
@@ -136,8 +143,13 @@ radar_plot2 <- function(data, colors, labels) {
 
 # 2 Sub-dimensions -------------------------------------------------------------
 subd_levels <- subset(patient, select = c(Level1:Level2, CD:NVSM))
-subd_level1 <- subd_levels %>% select(-Level2) %>% group_by(Level1) %>% summarise_all(mean)
-subd_level2 <- subd_levels %>% group_by(Level1, Level2) %>% summarise_all(mean)
+subd_level1 <- subd_levels %>% 
+  select(-Level2) %>% 
+  group_by(Level1) %>% 
+  summarise_all(mean)
+subd_level2 <- subd_levels %>% 
+  group_by(Level1, Level2) %>% 
+  summarise_all(mean)
 
 # level 1
 # LOI vs SAI
@@ -169,12 +181,12 @@ with(patient, ftable(Level1, Level2))
 hamd_levels <- patient[, c(7, 8, 13:29)]
 hamd_levels$Level1 <- factor(
   hamd_levels$Level1,
-  level = 1:2,
+  level  = 1:2,
   labels = c("LOI", "SAI")
 )
 hamd_levels$Level2 <- factor(
   hamd_levels$Level2,
-  level = c(2, 3, 1, 4),
+  level  = c(2, 3, 1, 4),
   labels = c("SAI+", "SAI-", "LOI+", "LOI-")
 )
 
@@ -207,7 +219,7 @@ themes <-  theme(
   legend.title     = element_blank(),
   axis.text.x      = element_text(size = 17, face = "bold", color = "black"),
   axis.text.y.left = element_text(size = 20),
-  axis.line        = element_line(colour = "black", size = 1, linetype = "solid"),
+  axis.line        = element_line(color = "black", size = 1, linetype = "solid"),
   panel.background = element_rect(fill = "white")
 )
 
